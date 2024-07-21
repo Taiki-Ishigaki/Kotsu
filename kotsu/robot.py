@@ -108,9 +108,19 @@ class RobotState:
     for i in range(n):
       mat[i,0:n] = mat_vec[n*i:n*i+n]
     return mat    
+  
+  def all_state_vec(self, name):
+    labels = []
+    for l in self.robot.links:
+      labels.append(l.name+"_"+name) 
+    
+    return self.link_state_df.df[labels][-1].to_numpy()
 
   def link_pos(self, id):
     return self.link_state_vec("pos", id)
+  
+  def all_link_pos(self):
+    return self.all_state_vec("pos")
   
   def link_rot(self, id):
     return self.link_state_mat("rot", id)
