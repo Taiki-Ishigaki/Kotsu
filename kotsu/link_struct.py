@@ -26,6 +26,7 @@ class LinkStruct_:
   inertia_param: np.ndarray = np.zeros(6)
     
 class LinkStruct(LinkStruct_):
+  id : int = 0
   dof : int = 0
   joint_dof : int = 0
   link_dof : int = 0
