@@ -87,6 +87,8 @@ def main():
 
   print(robot_state.link_pos(0))
   print(robot_state.link_pos(1))
+  
+  print(robot_state.all_link_pos())
 
   print(robot_state.link_rot(0))
   print(robot_state.link_rot(1))
