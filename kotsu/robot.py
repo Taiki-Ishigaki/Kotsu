@@ -113,9 +113,9 @@ class RobotState:
     labels = []
     for l in self.robot.links:
       labels.append(l.name+"_"+name) 
-    
-    return self.link_state_df.df[labels][-1].to_numpy()
-
+    mat = [self.link_state_df.df[label][-1].to_list() for label in labels]
+    return np.array(mat)
+  
   def link_pos(self, id):
     return self.link_state_vec("pos", id)
   
