@@ -53,13 +53,20 @@ def main():
       robot.links[0].name + "_" + "accel" : [],
       robot.links[0].name + "_" + "force" : [],
       robot.links[1].name + "_" + "coord" : [0.],
-      robot.links[1].name + "_" + "veloc" : [0.],
-      robot.links[1].name + "_" + "accel" : [0.],
-      robot.links[1].name + "_" + "force" : [0.]
+      robot.links[1].name + "_" + "veloc" : [1.],
+      robot.links[1].name + "_" + "accel" : [2.],
+      robot.links[1].name + "_" + "force" : [3.]
   }
   link_df.add_row(data)
 
   print(link_df.df)
+  
+  robot_gen_value = RobotGenValue(robot, link_df)
+  
+  print(robot_gen_value.set_gen_coord())
+  print(robot_gen_value.set_gen_veloc())
+  print(robot_gen_value.set_gen_accel())
+  print(robot_gen_value.set_gen_force())
 
   link_state_df = LinkStateDF(robot.links)
   data = {
@@ -67,7 +74,7 @@ def main():
       robot.links[0].name + "_" + "rot" : [1., 0., 0., 0., 1., 0., 0., 0., 1.],
       robot.links[0].name + "_" + "vel" : [0., 0., 0., 0., 0., 0.],
       robot.links[0].name + "_" + "acc" : [0., 0., 0., 0., 0., 0.],
-      robot.links[1].name + "_" + "pos" : [0., 0., 0.],
+      robot.links[1].name + "_" + "pos" : [1., 2., 3.],
       robot.links[1].name + "_" + "rot" : [1., 0., 0., 0., 1., 0., 0., 0., 1.],
       robot.links[1].name + "_" + "vel" : [0., 0., 0., 0., 0., 0.],
       robot.links[1].name + "_" + "acc" : [0., 0., 0., 0., 0., 0.],
@@ -75,6 +82,14 @@ def main():
   link_state_df.add_row(data)
   
   print(link_state_df.df)
+  
+  robot_state = RobotState(robot, link_df, link_state_df)
+
+  print(robot_state.link_pos(0))
+  print(robot_state.link_pos(1))
+
+  print(robot_state.link_rot(0))
+  print(robot_state.link_rot(1))
 
 if __name__ == "__main__":
     main()
