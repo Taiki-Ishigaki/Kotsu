@@ -36,7 +36,7 @@ class RobotStruct:
       links[i].name = robot[i].attrib.get('name')
       links[i].joint_type = robot[i].attrib.get('joint_type')
       links[i].link_type = robot[i].attrib.get('link_type')
-      cnct_list = robot[i].attrib.get('connection')
+      cnct_list = eval(robot[i].attrib.get('connection'))
       links[i].connection = [int(cnct) for cnct in cnct_list]
       links[i].connect_pos = np.array(eval(robot[i].attrib.get('connect_pos')))
       links[i].connect_rot = np.array(eval(robot[i].attrib.get('connect_rot')))
