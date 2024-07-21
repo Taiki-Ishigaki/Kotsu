@@ -18,7 +18,7 @@ class RobotStruct:
     for l in self.links:
       self.dof += l.dof
       for i in l.connection:
-        self.cnct_mat[l.id,int(i)] = 1
+        self.cnct_mat[l.id,i] = 1
       
   def connectivity(self):
     return self.cnct_mat
@@ -36,7 +36,8 @@ class RobotStruct:
       links[i].name = robot[i].attrib.get('name')
       links[i].joint_type = robot[i].attrib.get('joint_type')
       links[i].link_type = robot[i].attrib.get('link_type')
-      links[i].connection = robot[i].attrib.get('connection')
+      cnct_list = robot[i].attrib.get('connection')
+      links[i].connection = [int(cnct) for cnct in cnct_list]
       links[i].connect_pos = np.array(eval(robot[i].attrib.get('connect_pos')))
       links[i].connect_rot = np.array(eval(robot[i].attrib.get('connect_rot')))
       links[i].cog = np.array(eval(robot[i].attrib.get('cog')))
