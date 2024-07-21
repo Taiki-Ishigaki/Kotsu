@@ -13,10 +13,9 @@ def show_kotsu(robot_state):
   ax.scatter(pos[:,0], pos[:,1], pos[:,2], c='r', marker='o')
 
   # エッジの描画
-  # for edge in edges:
-  #     p1 = nodes[edge[0]]
-  #     p2 = nodes[edge[1]]
-  #     ax.plot([p1[0], p2[0]], [p1[1], p2[1]], [p1[2], p2[2]], 'b')
+  for i in range(robot_state.robot.link_num):
+      for j in robot_state.robot.links[i].connection:
+        ax.plot([pos[i,0], pos[j,0]], [pos[i,1], pos[j,1]], [pos[i,2], pos[j,2]], 'b')
 
   # 軸ラベルの設定
   ax.set_xlabel('X')
