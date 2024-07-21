@@ -67,7 +67,7 @@ class RobotGenValue:
     self.df = link_gen_df
     
   def set_gen_vec(self, name, vec):
-    vec = np.zeros(self.dof)
+    vec = np.zeros(self.robot.dof)
     
     for l in self.robot.links:
       vec[l.dof_index : l.dof_index + l.dof] = self.df.df[l.name + "_" + name][-1].to_numpy()
@@ -75,16 +75,16 @@ class RobotGenValue:
     return vec
     
   def set_gen_coord(self):
-    return self.set_gen_vec(self, "coord", self.gen_coord)
+    return self.set_gen_vec("coord", self.gen_coord)
   
   def set_gen_veloc(self):
-    return self.set_gen_vec(self, "veloc", self.gen_veloc)
+    return self.set_gen_vec("veloc", self.gen_veloc)
   
   def set_gen_accel(self):
-    return self.set_gen_vec(self, "accel", self.gen_accel)
+    return self.set_gen_vec("accel", self.gen_accel)
   
   def set_gen_force(self):
-    return self.set_gen_vec(self, "force", self.gen_force)
+    return self.set_gen_vec("force", self.gen_force)
   
 class RobotState:
   robot : RobotStruct
@@ -96,25 +96,30 @@ class RobotState:
     self.link_gen_df = gen_df
     self.link_state_df = state_df
     
+  def link_state_vec(self, name, id):
+    return self.link_state_df.df[self.robot.links[id].name+"_"+name][-1].to_numpy()
+    
+  def link_state_mat(self, name, id):
+    mat_vec = self.link_state_df.df[self.robot.links[id].name+"_"+name][-1].to_numpy()
+    nn = len(mat_vec)
+    n = int(np.sqrt(nn))
+
+    mat = np.zeros((n,n))
+    for i in range(n):
+      mat[i,0:n] = mat_vec[n*i:n*i+n]
+    return mat    
+
   def link_pos(self, id):
-    return self.state_df.df[self.links[id].name+"_pos"][-1].to_numpy()
-  
-  def all_link_pos(self):
-    return self.state_df.df[self.links[id].name+"_pos"].to_numpy()
+    return self.link_state_vec("pos", id)
   
   def link_rot(self, id):
-    _rot = np.zeros((3,3))
-    r = self.state_df.df[self.links[id].name+"_rot"][-1].to_numpy()
-    _rot[0,0:3] = r[0:3]
-    _rot[1,0:3] = r[3:6]
-    _rot[2,0:3] = r[6:12]
-    return _rot
+    return self.link_state_mat("rot", id)
 
   def link_vel(self, id):
-    return self.state_df.df[self.links[id].name+"_vel"][-1].to_numpy()
+    return self.link_state_vec("vel", id)
 
   def link_acc(self, id):
-    return self.state_df.df[self.links[id].name+"_acc"][-1].to_numpy()
+    return self.link_state_vec("acc", id)
     
   def link_frame(self, id):
     h = SE3(self.link_rot(id), self.link_pos(id))
