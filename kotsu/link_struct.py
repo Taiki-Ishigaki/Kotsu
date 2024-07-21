@@ -14,7 +14,7 @@ from mathrobo.so3 import *
 from mathrobo.se3 import *
 
 @dataclass
-class LinkStruct:
+class LinkStruct_:
   name: str = 'name'
   joint_type: str = "revolution"
   link_type: str = "rigid"
@@ -24,21 +24,44 @@ class LinkStruct:
   cog: np.ndarray = np.zeros(3)
   mass: float = 1.
   inertia_param: np.ndarray = np.zeros(6)
-
-  def read_link(self):
-    return
-
+    
+class LinkStruct(LinkStruct_):
+  dof : int = 0
+  joint_dof : int = 0
+  link_dof : int = 0
+  dof_index : int = 0
+  
   def connent_frame(self):
     return SE3(self.connect_rot, self.connect_pos).matrix()
 
   def connent_adj_frame(self):
     return SE3(self.connect_rot, self.connect_pos).adjoint()
   
+  @staticmethod
+  def _joint_dof(type):
+    if type == "revolution":
+      return 1
+    elif type == "fix":
+      return 0
+  
+  @staticmethod
+  def _link_dof(type):
+    if type == "rigid":
+      return 0
+  
+  def set_dof(self):
+    self.joint_dof = self._joint_dof(self.joint_type)
+    self.link_dof = self._link_dof(self.link_type)
+    self.dof_index = self.joint_dof + self.link_dof
+    
+  def dof(self):
+    return self.joint_dof(self) + self.link_dof(self)
+    
 def read_model_file(xml_data):
   robot = ET.fromstring(xml_data)
 
   links = []
-
+  dof_index = 0
   for i in range(len(robot)):
     links.append(LinkStruct())
 
@@ -51,5 +74,10 @@ def read_model_file(xml_data):
     links[i].cog = np.array(eval(robot[i].attrib.get('cog')))
     links[i].mass = eval(robot[i].attrib.get('mass'))
     links[i].inertia_param = np.array(eval(robot[i].attrib.get('inertia_param')))
+
+    links[i].set_dof()
+
+    links[i].dof_index = dof_index
+    dof_index += links[i].dof
 
   return links
