@@ -2,6 +2,7 @@ import numpy as np
 import polars
 
 from kotsu.robot import *
+from kotsu.simple_draw import *
 
 links_xml = """<?xml version="1.0"?>
 <robot>
@@ -92,6 +93,8 @@ def main():
 
   print(robot_state.link_rot(0))
   print(robot_state.link_rot(1))
+  
+  show_kotsu(robot_state)
 
 if __name__ == "__main__":
     main()
