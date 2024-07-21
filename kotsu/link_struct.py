@@ -31,11 +31,8 @@ class LinkStruct(LinkStruct_):
   link_dof : int = 0
   dof_index : int = 0
   
-  def connent_frame(self):
-    return SE3(self.connect_rot, self.connect_pos).matrix()
-
-  def connent_adj_frame(self):
-    return SE3(self.connect_rot, self.connect_pos).adjoint()
+  connent_frame : np.ndarray = np.identity(4)
+  connent_adj_frame : np.ndarray = np.identity(6)
   
   @staticmethod
   def _joint_dof(type):
@@ -56,12 +53,21 @@ class LinkStruct(LinkStruct_):
     
   def dof(self):
     return self.joint_dof(self) + self.link_dof(self)
+  
+  def set_connent_frame(self):
+    self.connent_frame = SE3(self.connect_rot, self.connect_pos).matrix()
+    return self.connent_frame
+
+  def set_connent_adj_frame(self):
+    self.connent_adj_frame =  SE3(self.connect_rot, self.connect_pos).adjoint()
+    return self.connent_adj_frame
     
 def read_model_file(xml_data):
   robot = ET.fromstring(xml_data)
 
   links = []
   dof_index = 0
+  
   for i in range(len(robot)):
     links.append(LinkStruct())
 
@@ -76,6 +82,8 @@ def read_model_file(xml_data):
     links[i].inertia_param = np.array(eval(robot[i].attrib.get('inertia_param')))
 
     links[i].set_dof()
+    links[i].set_connent_frame()
+    links[i].set_connent_adj_frame()
 
     links[i].dof_index = dof_index
     dof_index += links[i].dof
