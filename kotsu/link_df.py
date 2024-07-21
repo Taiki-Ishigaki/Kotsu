@@ -43,22 +43,3 @@ class LinkStateDF(LinkDF):
 
     self.df = pl.DataFrame()
     self.set_link_df(links)
-
-  def link_frame(self, id):
-    _pos = self.df[self.links[id].name+"_pos"].to_numpy()
-    _rot = np.zeros((3,3))
-    r = self.df[self.links[id].name+"_rot"].to_numpy()
-    _rot[0,0:3] = r[0:3]
-    _rot[1,0:3] = r[3:6]
-    _rot[2,0:3] = r[6:12]
-    return SE3(_rot, _pos).matrix()
-
-  def link_adj_frame(self, id):
-    _pos = self.df[self.links[id].name+"_pos"][0].to_numpy()
-    _rot = np.zeros((3,3))
-    r = self.df[self.links[id].name+"_rot"][0].to_numpy()
-    _rot[0,0:3] = r[0:3]
-    _rot[1,0:3] = r[3:6]
-    _rot[2,0:3] = r[6:12]
-    a = SE3(_rot, _pos)
-    return a.adjoint()
