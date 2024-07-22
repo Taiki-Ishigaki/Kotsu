@@ -69,30 +69,39 @@ class RobotStruct:
     return links
 
 class RobotGenValue:
-  df : LinkGenDF
+  _df : LinkGenDF
   coord : np.ndarray = np.array([])
   veloc : np.ndarray = np.array([])
   accel : np.ndarray = np.array([])
   force : np.ndarray = np.array([])
   
   def __init__(self, link_gen_df):
-    self.df = link_gen_df
+    self._df = link_gen_df
+    
+  def df(self):
+    return self._df.df
     
   def export_vec(self, robot, name, vec):
     vec = np.zeros(robot.dof)
     
     for l in robot.links:
-      vec[l.dof_index : l.dof_index + l.dof] = self.df.df[l.name + "_" + name][-1].to_numpy()
+      vec[l.dof_index : l.dof_index + l.dof] = self.df()[l.name + "_" + name][-1].to_numpy()
       
     return vec
+  
+  def link_gen_value(self, l, vec):
+    if(l.dof > 0):
+      return vec[l.dof_index:l.dof_index+l.dof]
+    else:
+      return []
   
   def import_vecs(self, robot, vecs):
     data = {}
     for l in robot.links:
       for i in range(len(vecs)):
-        data.update(l.name + "_" + self.df.aliases[i] , vecs[i][l.dof_index:l.dof_index+l.dof])
+        data.update([(l.name + "_" + self._df.aliases[i] , self.link_gen_value(l, vecs[i]))])
 
-    self.df.add_row(data)
+    self._df.add_row(data)
 
   def export_coord(self, robot):
     return self.export_vec(robot, "coord", self.coord)
@@ -107,16 +116,19 @@ class RobotGenValue:
     return self.export_vec(robot, "force", self.force)
   
 class RobotState:
-  df : LinkStateDF 
+  _df : LinkStateDF 
   
   def __init__(self, state_df):
-    self.df = state_df
+    self._df = state_df
+    
+  def df(self):
+    return self._df.df
     
   def link_state_vec(self, robot, name, id):
-    return self.df.df[robot.links[id].name+"_"+name][-1].to_numpy()
+    return self.df()[robot.links[id].name+"_"+name][-1].to_numpy()
     
   def link_state_mat(self, robot, name, id):
-    mat_vec = self.df.df[robot.links[id].name+"_"+name][-1].to_numpy()
+    mat_vec = self.df()[robot.links[id].name+"_"+name][-1].to_numpy()
     nn = len(mat_vec)
     n = int(np.sqrt(nn))
 
@@ -129,7 +141,7 @@ class RobotState:
     labels = []
     for l in robot.links:
       labels.append(l.name+"_"+name) 
-    mat = [self.df.df[label][-1].to_list() for label in labels]
+    mat = [self.df()[label][-1].to_list() for label in labels]
     return np.array(mat)
   
   def link_pos(self, robot, id):
