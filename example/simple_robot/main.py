@@ -28,7 +28,7 @@ links_xml = """<?xml version="1.0"?>
       joint_type="revolution"
       link_type="rigid"
       connection="[0,2]"
-      connect_pos = "[0., 0., 0.]"
+      connect_pos = "[0., 0., 1.]"
       connect_rot =
       "[
         [1., 0., 0.],
@@ -45,7 +45,7 @@ links_xml = """<?xml version="1.0"?>
       joint_type="revolution"
       link_type="rigid"
       connection="[1,3]"
-      connect_pos = "[0., 0., 0.]"
+      connect_pos = "[0., 0., 1.]"
       connect_rot =
       "[
         [1., 0., 0.],
@@ -62,7 +62,7 @@ links_xml = """<?xml version="1.0"?>
       joint_type="revolution"
       link_type="rigid"
       connection="[2]"
-      connect_pos = "[0., 0., 0.]"
+      connect_pos = "[0., 0., 1.]"
       connect_rot =
       "[
         [1., 0., 0.],
@@ -78,42 +78,18 @@ links_xml = """<?xml version="1.0"?>
 """
 
 def main():
-  robot = RobotStruct(RobotStruct.read_model_file(links_xml))
+  robot = Robot.init_from_model_file(links_xml)    
   
-  print("dof" + str(robot.dof))
+  coord = [1., 1., 1.]
+  veloc = [2., 2., 2.]
+  accel = [3., 3., 3.]
+  force = [4., 4., 4.]
   
-  link_df = LinkGenDF(robot.links)
+  vecs = [coord, veloc, accel, force]
 
-  data = {
-      robot.links[0].name + "_" + "coord" : [],
-      robot.links[0].name + "_" + "veloc" : [],
-      robot.links[0].name + "_" + "accel" : [],
-      robot.links[0].name + "_" + "force" : [],
-      robot.links[1].name + "_" + "coord" : [0.],
-      robot.links[1].name + "_" + "veloc" : [1.],
-      robot.links[1].name + "_" + "accel" : [2.],
-      robot.links[1].name + "_" + "force" : [3.],
-      robot.links[2].name + "_" + "coord" : [0.],
-      robot.links[2].name + "_" + "veloc" : [1.],
-      robot.links[2].name + "_" + "accel" : [2.],
-      robot.links[2].name + "_" + "force" : [3.],
-      robot.links[3].name + "_" + "coord" : [0.],
-      robot.links[3].name + "_" + "veloc" : [1.],
-      robot.links[3].name + "_" + "accel" : [2.],
-      robot.links[3].name + "_" + "force" : [3.]
-  }
-  link_df.add_row(data)
-
-  print(link_df.df)
+  robot.import_gen_vecs(vecs)
+  print(robot.gen_value.df())
   
-  robot_gen_value = RobotGenValue(link_df)
-  
-  print(robot_gen_value.export_coord())
-  print(robot_gen_value.export_veloc())
-  print(robot_gen_value.export_accel())
-  print(robot_gen_value.export_force())
-
-  link_state_df = LinkStateDF(robot.links)
   data = {
       robot.links[0].name + "_" + "pos" : [0., 0., 0.],
       robot.links[0].name + "_" + "rot" : [1., 0., 0., 0., 1., 0., 0., 0., 1.],
@@ -132,21 +108,12 @@ def main():
       robot.links[3].name + "_" + "vel" : [0., 0., 0., 0., 0., 0.],
       robot.links[3].name + "_" + "acc" : [0., 0., 0., 0., 0., 0.],
   }
-  link_state_df.add_row(data)
-  
-  print(link_state_df.df)
-  
-  robot_state = RobotState(link_state_df)
 
-  print(robot_state.link_pos(robot, 0))
-  print(robot_state.link_pos(robot, 1))
+  robot.state._df.add_row(data)
   
-  print(robot_state.all_link_pos(robot))
-
-  print(robot_state.link_rot(robot, 0))
-  print(robot_state.link_rot(robot, 1))
+  print(robot.state.df())
   
-  show_kotsu(robot, robot_state)
+  show_kotsu(robot, robot.state)
 
 if __name__ == "__main__":
     main()
