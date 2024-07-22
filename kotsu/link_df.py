@@ -10,15 +10,15 @@ from mathrobo.so3 import *
 from mathrobo.se3 import *
 
 class LinkDF:
-  def __init__(self, links, aliases_, separator_ = "_"):
+  def __init__(self, links_, aliases_, separator_ = "_"):
     self.aliases = aliases_
     self.separator = separator_
 
     self.df = pl.DataFrame()
-    self.set_link_df(links)
+    self.set_link_df(links_)
 
-  def set_link_df(self, links):
-    for l in links:
+  def set_link_df(self, links_):
+    for l in links_:
       for a in self.aliases:
         alias_name = l.name + self.separator + a
         self.df = self.df.with_columns([pl.Series(name=alias_name, dtype=pl.List(pl.Float64))])
@@ -28,18 +28,17 @@ class LinkDF:
     self.df = self.df.vstack(new_row)
 
 class LinkGenDF(LinkDF):
-  def __init__(self, links, aliases_ = ["coord", "veloc", "accel", "force"], separator_ = "_"):
-    self.links = links
+  def __init__(self, links_, aliases_ = ["coord", "veloc", "accel", "force"], separator_ = "_"):
     self.separator = separator_
     self.aliases = aliases_
 
     self.df = pl.DataFrame()
-    self.set_link_df(links)
+    self.set_link_df(links_)
 
 class LinkStateDF(LinkDF):
-  def __init__(self, links, aliases_ = ["pos", "rot", "vel", "acc"], separator_ = "_"):
+  def __init__(self, links_, aliases_ = ["pos", "rot", "vel", "acc"], separator_ = "_"):
     self.separator = separator_
     self.aliases = aliases_
 
     self.df = pl.DataFrame()
-    self.set_link_df(links)
+    self.set_link_df(links_)
