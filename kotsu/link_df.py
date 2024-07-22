@@ -28,18 +28,18 @@ class LinkDF:
     self.df = self.df.vstack(new_row)
 
 class LinkGenDF(LinkDF):
-  def __init__(self, links, separator_ = "_"):
+  def __init__(self, links, aliases_ = ["coord", "veloc", "accel", "force"], separator_ = "_"):
     self.links = links
     self.separator = separator_
-    self.aliases = ["coord", "veloc", "accel", "force"]
+    self.aliases = aliases_
 
     self.df = pl.DataFrame()
     self.set_link_df(links)
 
 class LinkStateDF(LinkDF):
-  def __init__(self, links, separator_ = "_"):
+  def __init__(self, links, aliases_ = ["pos", "rot", "vel", "acc"], separator_ = "_"):
     self.separator = separator_
-    self.aliases = ["pos", "rot", "vel", "acc"]
+    self.aliases = aliases_
 
     self.df = pl.DataFrame()
     self.set_link_df(links)
