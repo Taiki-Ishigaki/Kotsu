@@ -108,10 +108,10 @@ def main():
   
   robot_gen_value = RobotGenValue(link_df)
   
-  print(robot_gen_value.set_gen_coord())
-  print(robot_gen_value.set_gen_veloc())
-  print(robot_gen_value.set_gen_accel())
-  print(robot_gen_value.set_gen_force())
+  print(robot_gen_value.export_coord())
+  print(robot_gen_value.export_veloc())
+  print(robot_gen_value.export_accel())
+  print(robot_gen_value.export_force())
 
   link_state_df = LinkStateDF(robot.links)
   data = {
