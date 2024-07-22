@@ -66,7 +66,7 @@ class RobotStruct:
       links[i].dof_index = dof_index
       dof_index += links[i].dof
 
-    return RobotStruct(links)
+    return links
 
 class RobotGenValue:
   df : LinkGenDF

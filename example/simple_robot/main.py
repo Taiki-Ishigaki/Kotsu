@@ -78,7 +78,7 @@ links_xml = """<?xml version="1.0"?>
 """
 
 def main():
-  robot = RobotStruct.read_model_file(links_xml)
+  robot = RobotStruct(RobotStruct.read_model_file(links_xml))
   
   print("dof" + str(robot.dof))
   
