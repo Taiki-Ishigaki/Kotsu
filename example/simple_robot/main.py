@@ -106,7 +106,7 @@ def main():
 
   print(link_df.df)
   
-  robot_gen_value = RobotGenValue(robot, link_df)
+  robot_gen_value = RobotGenValue(link_df)
   
   print(robot_gen_value.set_gen_coord())
   print(robot_gen_value.set_gen_veloc())
@@ -136,15 +136,15 @@ def main():
   
   print(link_state_df.df)
   
-  robot_state = RobotState(robot, link_df, link_state_df)
+  robot_state = RobotState(link_state_df)
 
-  print(robot_state.link_pos(0))
-  print(robot_state.link_pos(1))
+  print(robot_state.link_pos(robot, 0))
+  print(robot_state.link_pos(robot, 1))
   
-  print(robot_state.all_link_pos())
+  print(robot_state.all_link_pos(robot))
 
-  print(robot_state.link_rot(0))
-  print(robot_state.link_rot(1))
+  print(robot_state.link_rot(robot, 0))
+  print(robot_state.link_rot(robot, 1))
   
   show_kotsu(robot_state)
 

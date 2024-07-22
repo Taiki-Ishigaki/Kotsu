@@ -56,52 +56,54 @@ class RobotStruct:
     return RobotStruct(links)
 
 class RobotGenValue:
-  robot : RobotStruct
   df : LinkGenDF
   gen_coord : np.ndarray = np.array([])
   gen_veloc : np.ndarray = np.array([])
   gen_accel : np.ndarray = np.array([])
   gen_force : np.ndarray = np.array([])
   
-  def __init__(self, robot_, link_gen_df):
-    self.robot = robot_
+  def __init__(self, link_gen_df):
     self.df = link_gen_df
     
-  def set_gen_vec(self, name, vec):
-    vec = np.zeros(self.robot.dof)
+  def export_gen_vec(self, robot, name, vec):
+    vec = np.zeros(robot.dof)
     
-    for l in self.robot.links:
+    for l in robot.links:
       vec[l.dof_index : l.dof_index + l.dof] = self.df.df[l.name + "_" + name][-1].to_numpy()
       
     return vec
-    
-  def set_gen_coord(self):
-    return self.set_gen_vec("coord", self.gen_coord)
   
-  def set_gen_veloc(self):
-    return self.set_gen_vec("veloc", self.gen_veloc)
+  def import_gen_vecs(self, robot, vecs):
+    data = {}
+    for l in robot.links:
+      for i in range(len(vecs)):
+        data.update(l.name + "_" + self.df.aliases[i] , vecs[i][l.dof_index:l.dof_index+l.dof])
+
+    self.df.add_row(data)
+
+  def export_gen_coord(self, robot):
+    return self.export_gen_vec(robot, "coord", self.gen_coord)
   
-  def set_gen_accel(self):
-    return self.set_gen_vec("accel", self.gen_accel)
+  def export_gen_veloc(self, robot):
+    return self.export_gen_vec(robot, "veloc", self.gen_veloc)
   
-  def set_gen_force(self):
-    return self.set_gen_vec("force", self.gen_force)
+  def export_gen_accel(self, robot):
+    return self.export_gen_vec(robot, "accel", self.gen_accel)
+  
+  def export_gen_force(self, robot):
+    return self.export_gen_vec(robot, "force", self.gen_force)
   
 class RobotState:
-  robot : RobotStruct
-  link_gen_df : LinkGenDF
   link_state_df : LinkStateDF 
   
-  def __init__(self, robot_, gen_df, state_df):
-    self.robot = robot_
-    self.link_gen_df = gen_df
+  def __init__(self, state_df):
     self.link_state_df = state_df
     
-  def link_state_vec(self, name, id):
-    return self.link_state_df.df[self.robot.links[id].name+"_"+name][-1].to_numpy()
+  def link_state_vec(self, robot, name, id):
+    return self.link_state_df.df[robot.links[id].name+"_"+name][-1].to_numpy()
     
-  def link_state_mat(self, name, id):
-    mat_vec = self.link_state_df.df[self.robot.links[id].name+"_"+name][-1].to_numpy()
+  def link_state_mat(self, robot, name, id):
+    mat_vec = self.link_state_df.df[robot.links[id].name+"_"+name][-1].to_numpy()
     nn = len(mat_vec)
     n = int(np.sqrt(nn))
 
@@ -110,32 +112,35 @@ class RobotState:
       mat[i,0:n] = mat_vec[n*i:n*i+n]
     return mat    
   
-  def all_state_vec(self, name):
+  def all_state_vec(self, robot, name):
     labels = []
-    for l in self.robot.links:
+    for l in robot.links:
       labels.append(l.name+"_"+name) 
     mat = [self.link_state_df.df[label][-1].to_list() for label in labels]
     return np.array(mat)
   
-  def link_pos(self, id):
-    return self.link_state_vec("pos", id)
+  def link_pos(self, robot, id):
+    return self.link_state_vec(robot, "pos", id)
   
-  def all_link_pos(self):
-    return self.all_state_vec("pos")
+  def all_link_pos(self, robot):
+    return self.all_state_vec(robot, "pos")
   
-  def link_rot(self, id):
-    return self.link_state_mat("rot", id)
+  def link_rot(self, robot, id):
+    return self.link_state_mat(robot, "rot", id)
 
-  def link_vel(self, id):
-    return self.link_state_vec("vel", id)
+  def link_vel(self, robot, id):
+    return self.link_state_vec(robot, "vel", id)
 
-  def link_acc(self, id):
-    return self.link_state_vec("acc", id)
+  def link_acc(self, robot, id):
+    return self.link_state_vec(robot, "acc", id)
     
-  def link_frame(self, id):
-    h = SE3(self.link_rot(id), self.link_pos(id))
+  def link_frame(self, robot, id):
+    h = SE3(self.link_rot(robot, id), self.link_pos(robot, id))
     return h.matrix()
 
-  def link_adj_frame(self, id):
-    a = SE3(self.link_rot(id), self.link_pos(id))
+  def link_adj_frame(self, robot, id):
+    a = SE3(self.link_rot(robot, id), self.link_pos(robot, id))
     return a.adjoint()
+  
+  class Robot(RobotStruct):
+
