@@ -146,7 +146,7 @@ def main():
   print(robot_state.link_rot(robot, 0))
   print(robot_state.link_rot(robot, 1))
   
-  show_kotsu(robot_state)
+  show_kotsu(robot, robot_state)
 
 if __name__ == "__main__":
     main()

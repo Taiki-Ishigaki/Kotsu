@@ -3,13 +3,13 @@ import numpy as np
 
 from kotsu.robot import *
 
-def show_kotsu(robot_state):
+def show_kotsu(robot, robot_state):
   # 3Dプロットの作成
   fig = plt.figure()
   ax = fig.add_subplot(111, projection='3d')
 
   # ノードの描画
-  pos = robot_state.all_link_pos()
+  pos = robot_state.all_link_pos(robot)
   ax.scatter(pos[:,0], pos[:,1], pos[:,2], c='r', marker='o')
 
   # エッジの描画
