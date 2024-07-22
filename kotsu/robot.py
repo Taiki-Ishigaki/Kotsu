@@ -155,5 +155,14 @@ class RobotState:
     a = SE3(self.link_rot(robot, id), self.link_pos(robot, id))
     return a.adjoint()
   
-  class Robot(RobotStruct):
+class Robot(RobotStruct):
 
+  gen_value : RobotGenValue
+  state : RobotState 
+
+  def __init__(self, links_, gen_value_, state_):
+    self.links = links_
+    self.gen_value = gen_value_
+    self.state = state_
+    
+    self.robot_init()
