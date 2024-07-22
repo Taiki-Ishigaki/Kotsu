@@ -12,15 +12,6 @@ class RobotStruct:
     self.links = links_
 
     self.robot_init()
-    # self.link_num = len(links_)    
-
-    # self.cnct_mat = np.zeros((self.link_num, self.link_num))
-
-    # self.dof = 0
-    # for l in self.links:
-    #   self.dof += l.dof
-    #   for i in l.connection:
-    #     self.cnct_mat[l.id,i] = 1
 
   def robot_init(self):
     self.link_num = len(self.links)  
