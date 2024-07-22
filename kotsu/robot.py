@@ -14,10 +14,9 @@ class Robot(RobotStruct):
   state : RobotState 
 
   def __init__(self, links_, gen_value_, state_):
-    self.robot = links_
+    self.links = links_
     self.gen_value = gen_value_
     self.state = state_
-    
     self.robot_init()
 
   @staticmethod
@@ -26,4 +25,7 @@ class Robot(RobotStruct):
     gen_value = RobotGenValue(LinkGenDF(links))
     state = RobotState(LinkStateDF(links))
     return Robot(links, gen_value, state)
+  
+  def import_gen_vecs(self, vecs):
+    self.gen_value.import_vecs(self, vecs)
 
