@@ -50,9 +50,7 @@ class RobotStruct:
       
       links[i].id = i
 
-      links[i].set_dof()
-      links[i].set_connent_frame()
-      links[i].set_connent_adj_frame()
+      links[i].init()
 
       links[i].dof_index = dof_index
       dof_index += links[i].dof

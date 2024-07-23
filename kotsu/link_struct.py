@@ -31,10 +31,18 @@ class LinkStruct(LinkStruct_):
   joint_dof : int = 0
   link_dof : int = 0
   dof_index : int = 0
+
+  joint_select_mat : np.ndarray = np.array([])
   
   connent_frame : np.ndarray = np.identity(4)
   connent_adj_frame : np.ndarray = np.identity(6)
-  
+
+  def init(self):
+    self.joint_select_mat = self._joint_select_mat(self.joint_type)
+    self.set_dof()
+    self.set_connent_frame()
+    self.set_connent_adj_frame()
+
   @staticmethod
   def _joint_dof(type):
     if type == "revolution":
@@ -46,6 +54,15 @@ class LinkStruct(LinkStruct_):
   def _link_dof(type):
     if type == "rigid":
       return 0
+    
+  @staticmethod
+  def _joint_select_mat(joint_type):
+    if joint_type == 'fix':
+      return np.zeros((6,1))
+    elif joint_type == 'revolution':
+      mat = np.zeros((6,1))
+      mat[2,0] = 1
+      return mat
   
   def set_dof(self):
     self.joint_dof = self._joint_dof(self.joint_type)
