@@ -77,6 +77,18 @@ class RobotGenValue:
       vec[l.dof_index : l.dof_index + l.dof] = self.df()[l.name + "_" + name][-1].to_numpy()
       
     return vec
+
+  def export_coord(self, robot):
+    return self.export_vec(robot, "coord", self.coord)
+  
+  def export_veloc(self, robot):
+    return self.export_vec(robot, "veloc", self.veloc)
+  
+  def export_accel(self, robot):
+    return self.export_vec(robot, "accel", self.accel)
+  
+  def export_force(self, robot):
+    return self.export_vec(robot, "force", self.force)
   
   def link_gen_value(self, l, vec):
     if(l.dof > 0):
@@ -91,18 +103,21 @@ class RobotGenValue:
         data.update([(l.name + "_" + self._df.aliases[i] , self.link_gen_value(l, vecs[i]))])
 
     self._df.add_row(data)
+    
+  def link_gen_value(self, link, name):
+    return self.df()[link.name + "_" + name][-1].to_numpy()
 
-  def export_coord(self, robot):
-    return self.export_vec(robot, "coord", self.coord)
+  def link_coord(self, link):
+    return self.link_gen_value(link, "coord")
   
-  def export_veloc(self, robot):
-    return self.export_vec(robot, "veloc", self.veloc)
+  def link_veloc(self, link):
+    return self.link_gen_value(link, "veloc")
   
-  def export_accel(self, robot):
-    return self.export_vec(robot, "accel", self.accel)
+  def link_accel(self, link):
+    return self.link_gen_value(link, "accel")
   
-  def export_force(self, robot):
-    return self.export_vec(robot, "force", self.force)
+  def link_force(self, link):
+    return self.link_gen_value(link, "force")
   
 class RobotState:
   _df : LinkStateDF 
@@ -113,11 +128,11 @@ class RobotState:
   def df(self):
     return self._df.df
     
-  def link_state_vec(self, robot, name, id):
-    return self.df()[robot.links[id].name+"_"+name][-1].to_numpy()
+  def link_state_vec(self, link, name):
+    return self.df()[link.name+"_"+name][-1].to_numpy()
     
-  def link_state_mat(self, robot, name, id):
-    mat_vec = self.df()[robot.links[id].name+"_"+name][-1].to_numpy()
+  def link_state_mat(self, link, name):
+    mat_vec = self.df()[link.name+"_"+name][-1].to_numpy()
     nn = len(mat_vec)
     n = int(np.sqrt(nn))
 
@@ -133,25 +148,25 @@ class RobotState:
     mat = [self.df()[label][-1].to_list() for label in labels]
     return np.array(mat)
   
-  def link_pos(self, robot, id):
-    return self.link_state_vec(robot, "pos", id)
+  def link_pos(self, link):
+    return self.link_state_vec(link, "pos")
   
   def all_link_pos(self, robot):
     return self.all_state_vec(robot, "pos")
   
-  def link_rot(self, robot, id):
-    return self.link_state_mat(robot, "rot", id)
+  def link_rot(self, link):
+    return self.link_state_mat(link, "rot")
 
-  def link_vel(self, robot, id):
-    return self.link_state_vec(robot, "vel", id)
+  def link_vel(self, link):
+    return self.link_state_vec(link, "vel")
 
-  def link_acc(self, robot, id):
-    return self.link_state_vec(robot, "acc", id)
+  def link_acc(self, link):
+    return self.link_state_vec(link, "acc")
     
-  def link_frame(self, robot, id):
-    h = SE3(self.link_rot(robot, id), self.link_pos(robot, id))
+  def link_frame(self, link):
+    h = SE3(self.link_rot(link), self.link_pos(link))
     return h.matrix()
 
-  def link_adj_frame(self, robot, id):
-    a = SE3(self.link_rot(robot, id), self.link_pos(robot, id))
+  def link_adj_frame(self, link):
+    a = SE3(self.link_rot(link), self.link_pos(link))
     return a.adjoint()
