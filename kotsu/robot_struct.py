@@ -4,49 +4,80 @@
 
 import numpy as np
 
+from pickle import FALSE
+import xml.etree.ElementTree as ET
+
+from kotsu.joint_struct import *
 from kotsu.link_struct import *
 from kotsu.link_df import *
 
 class RobotStruct:
-  def __init__(self, links_):
+  def __init__(self, joints_, links_):
+    self.joints = joints_
     self.links = links_
 
     self.robot_init()
 
   def robot_init(self):
+    self.joint_num = len(self.joints)
     self.link_num = len(self.links)  
 
-    self.cnct_mat = np.zeros((self.link_num, self.link_num))
+    # self.cnct_mat = np.zeros((self.link_num, self.link_num))
 
     self.dof = 0
+    for j in self.joints:
+      self.dof += j.dof
+      
     for l in self.links:
       self.dof += l.dof
-      for i in l.connection:
-        self.cnct_mat[l.id,i] = 1
+      # for i in l.connection:
+      #   self.cnct_mat[l.id,i] = 1
       
-  def connectivity(self):
-    return self.cnct_mat
+  # def connectivity(self):
+  #   return self.cnct_mat
 
   @staticmethod
   def read_model_file(xml_data):
     robot = ET.fromstring(xml_data)
 
+    joints = []
     links = []
     dof_index = 0
+    
+    joint_list = robot.findall('joint')
+    
+    for i in range(len(joint_list)):
+      
+      joints.append(JointStruct())
+      
+      joints[i].name = joint_list[i].attrib.get('name')
+      joints[i].joint_type = joint_list[i].attrib.get('joint_type')
+      joints[i].link_type = joint_list[i].attrib.get('link_type')
+      cnct_list = eval(joint_list[i].attrib.get('connection'))
 
-    for i in range(len(robot)):
+      joints[i].id = i
+
+      joints[i].init()
+
+      joints[i].dof_index = dof_index
+      dof_index += joints[i].dof
+    
+    link_list = robot.findall('link')
+
+    for i in range(len(link_list)):
+
       links.append(LinkStruct())
-
-      links[i].name = robot[i].attrib.get('name')
-      links[i].joint_type = robot[i].attrib.get('joint_type')
-      links[i].link_type = robot[i].attrib.get('link_type')
-      cnct_list = eval(robot[i].attrib.get('connection'))
+      
+      links[i].name = link_list[i].attrib.get('name')
+      links[i].joint_type = link_list[i].attrib.get('joint_type')
+      links[i].link_type = link_list[i].attrib.get('link_type')
+      cnct_list = eval(link_list[i].attrib.get('connection'))
       links[i].connection = [int(cnct) for cnct in cnct_list]
-      links[i].connect_pos = np.array(eval(robot[i].attrib.get('connect_pos')))
-      links[i].connect_rot = np.array(eval(robot[i].attrib.get('connect_rot')))
-      links[i].cog = np.array(eval(robot[i].attrib.get('cog')))
-      links[i].mass = eval(robot[i].attrib.get('mass'))
-      links[i].inertia_param = np.array(eval(robot[i].attrib.get('inertia_param')))
+      links[i].connect_pos = np.array(eval(link_list[i].attrib.get('connect_pos')))
+      links[i].connect_rot = np.array(eval(link_list[i].attrib.get('connect_rot')))
+      links[i].cog = np.array(eval(link_list[i].attrib.get('cog')))
+      links[i].mass = eval(link_list[i].attrib.get('mass'))
+      links[i].inertia_param = np.array(eval(link_list[i].attrib.get('inertia_param')))
       
       links[i].id = i
 
@@ -55,7 +86,7 @@ class RobotStruct:
       links[i].dof_index = dof_index
       dof_index += links[i].dof
 
-    return links
+    return joints, links
 
 class RobotGenValue:
   _df : LinkGenDF
@@ -90,7 +121,7 @@ class RobotGenValue:
   def export_force(self, robot):
     return self.export_vec(robot, "force", self.force)
   
-  def link_gen_value(self, l, vec):
+  def _vec_to_link_gen_value(self, l, vec):
     if(l.dof > 0):
       return vec[l.dof_index:l.dof_index+l.dof]
     else:
@@ -100,7 +131,7 @@ class RobotGenValue:
     data = {}
     for l in robot.links:
       for i in range(len(vecs)):
-        data.update([(l.name + "_" + self._df.aliases[i] , self.link_gen_value(l, vecs[i]))])
+        data.update([(l.name + "_" + self._df.aliases[i] , self._vec_to_link_gen_value(l, vecs[i]))])
 
     self._df.add_row(data)
     
@@ -170,3 +201,6 @@ class RobotState:
   def link_adj_frame(self, link):
     a = SE3(self.link_rot(link), self.link_pos(link))
     return a.adjoint()
+
+  def import_state(self, data):
+    self._df.add_row(data)

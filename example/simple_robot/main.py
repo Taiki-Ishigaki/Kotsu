@@ -6,8 +6,32 @@ from kotsu.simple_draw import *
 
 links_xml = """<?xml version="1.0"?>
 <robot>
+    <joint
+      name = "root_joint"
+      joint_type = "fix"
+      connection = "[0]"
+    >
+    </joint>
+    <joint
+      name = "joint1"
+      joint_type = "revolution"
+      connection = "[0,1]"
+    >
+    </joint>
+    <joint
+      name = "joint2"
+      joint_type = "revolution"
+      connection = "[1,2]"
+    >
+    </joint>
+    <joint
+      name = "joint3"
+      joint_type = "revolution"
+      connection = "[2,3]"
+    >
+    </joint>
     <link
-      name="root"
+      name="root_link"
       joint_type="fix"
       link_type="rigid"
       connection="[1]"
@@ -80,7 +104,7 @@ links_xml = """<?xml version="1.0"?>
 def main():
   robot = Robot.init_from_model_file(links_xml)    
   
-  coord = [1., 1., 1.]
+  coord = [0., 0., 0.]
   veloc = [2., 2., 2.]
   accel = [3., 3., 3.]
   force = [4., 4., 4.]
