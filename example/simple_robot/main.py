@@ -113,6 +113,10 @@ def main():
   
   print(robot.state.df())
   
+  robot.update_kinematics()
+  
+  print(robot.state.df())
+
   show_kotsu(robot, robot.state)
 
 if __name__ == "__main__":
