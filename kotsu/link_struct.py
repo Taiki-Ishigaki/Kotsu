@@ -25,7 +25,7 @@ class LinkStruct_:
 class LinkStruct(LinkStruct_):
   id : int = 0
   dof : int = 0
-  # joint_dof : int = 0
+  joint_dof : int = 0
   link_dof : int = 0
   dof_index : int = 0
 
@@ -40,12 +40,12 @@ class LinkStruct(LinkStruct_):
     self.set_connent_frame()
     self.set_connent_adj_frame()
 
-  # @staticmethod
-  # def _joint_dof(type):
-  #   if type == "revolution":
-  #     return 1
-  #   elif type == "fix":
-  #     return 0
+  @staticmethod
+  def _joint_dof(type):
+    if type == "revolution":
+      return 1
+    elif type == "fix":
+      return 0
   
   @staticmethod
   def _link_dof(type):
@@ -62,10 +62,9 @@ class LinkStruct(LinkStruct_):
       return mat
   
   def set_dof(self):
-    # self.joint_dof = self._joint_dof(self.joint_type)
+    self.joint_dof = self._joint_dof(self.joint_type)
     self.link_dof = self._link_dof(self.link_type)
-    self.dof = self.link_dof
-    # self.dof_index = self.joint_dof + self.link_dof
+    self.dof = self.joint_dof + self.link_dof
   
   def set_connent_frame(self):
     self.connent_frame = SE3(self.connect_rot, self.connect_pos).matrix()

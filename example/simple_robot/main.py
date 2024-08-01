@@ -6,52 +6,27 @@ from kotsu.simple_draw import *
 
 links_xml = """<?xml version="1.0"?>
 <robot>
-    <joint
-      name = "root_joint"
-      joint_type = "fix"
-      connection = "[0]"
-    >
-    </joint>
-    <joint
-      name = "joint1"
-      joint_type = "revolution"
-      connection = "[0,1]"
-    >
-    </joint>
-    <joint
-      name = "joint2"
-      joint_type = "revolution"
-      connection = "[1,2]"
-    >
-    </joint>
-    <joint
-      name = "joint3"
-      joint_type = "revolution"
-      connection = "[2,3]"
-    >
-    </joint>
-    <link
-      name="root_link"
-      joint_type="fix"
-      link_type="rigid"
-      connection="[1]"
-      connect_pos = "[0., 0., 0.]"
-      connect_rot =
-      "[
-        [1., 0., 0.],
-        [0., 1., 0.],
-        [0., 0., 1.]
-      ]"
-      cog = "[0., 1., 0.]"
-      mass = "100."
-      inertia_param = "[1., 1., 1., 0., 0., 0.]"
-    >
-    </link>
+  <link
+    name="root_link"
+    joint_type="fix"
+    link_type="rigid"
+    connection = "[0,1]"
+    connect_pos = "[0., 0., 0.]"
+    connect_rot =
+    "[
+      [1., 0., 0.],
+      [0., 1., 0.],
+      [0., 0., 1.]
+    ]"
+    cog = "[0., 1., 0.]"
+    mass = "100."
+    inertia_param = "[1., 1., 1., 0., 0., 0.]"
+  >
     <link
       name="link1"
       joint_type="revolution"
       link_type="rigid"
-      connection="[0,2]"
+      connection = "[0,1]"
       connect_pos = "[0., 0., 1.]"
       connect_rot =
       "[
@@ -63,46 +38,47 @@ links_xml = """<?xml version="1.0"?>
       mass = "100."
       inertia_param = "[1., 1., 1., 0., 0., 0.]"
     >
-    </link>
-    <link
-      name="link2"
-      joint_type="revolution"
-      link_type="rigid"
-      connection="[1,3]"
-      connect_pos = "[0., 0., 1.]"
-      connect_rot =
-      "[
-        [1., 0., 0.],
-        [0., 1., 0.],
-        [0., 0., 1.]
-      ]"
-      cog = "[0., 1., 0.]"
-      mass = "100."
-      inertia_param = "[1., 1., 1., 0., 0., 0.]"
-    >
-    </link>
-    <link
-      name="link3"
-      joint_type="revolution"
-      link_type="rigid"
-      connection="[2]"
-      connect_pos = "[0., 0., 1.]"
-      connect_rot =
-      "[
-        [1., 0., 0.],
-        [0., 1., 0.],
-        [0., 0., 1.]
-      ]"
-      cog = "[0., 1., 0.]"
-      mass = "100."
-      inertia_param = "[1., 1., 1., 0., 0., 0.]"
-    >
+      <link
+        name="link2"
+        joint_type="revolution"
+        link_type="rigid"
+        connection = "[1,2]"
+        connect_pos = "[0., 0., 1.]"
+        connect_rot =
+        "[
+          [1., 0., 0.],
+          [0., 1., 0.],
+          [0., 0., 1.]
+        ]"
+        cog = "[0., 1., 0.]"
+        mass = "100."
+        inertia_param = "[1., 1., 1., 0., 0., 0.]"
+      >
+        <link
+          name="link3"
+          joint_type="revolution"
+          link_type="rigid"
+          connection = "[2,3]"
+          connect_pos = "[0., 0., 1.]"
+          connect_rot =
+          "[
+            [1., 0., 0.],
+            [0., 1., 0.],
+            [0., 0., 1.]
+          ]"
+          cog = "[0., 1., 0.]"
+          mass = "100."
+          inertia_param = "[1., 1., 1., 0., 0., 0.]"
+        >
+        </link>
+      </link>
     </link>   
+  </link>
 </robot>
 """
 
 def main():
-  robot = Robot.init_from_model_file(links_xml)    
+  robot = Robot.init_from_model_file(links_xml) 
   
   coord = [0., 0., 0.]
   veloc = [2., 2., 2.]

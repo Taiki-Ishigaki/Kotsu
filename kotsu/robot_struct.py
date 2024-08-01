@@ -12,81 +12,65 @@ from kotsu.link_struct import *
 from kotsu.link_df import *
 
 class RobotStruct:
-  def __init__(self, joints_, links_):
-    self.joints = joints_
+  def __init__(self, links_):
     self.links = links_
 
     self.robot_init()
 
   def robot_init(self):
-    self.joint_num = len(self.joints)
     self.link_num = len(self.links)  
 
-    # self.cnct_mat = np.zeros((self.link_num, self.link_num))
+    self.cnct_mat = np.zeros((self.link_num, self.link_num))
 
     self.dof = 0
-    for j in self.joints:
-      self.dof += j.dof
       
     for l in self.links:
       self.dof += l.dof
-      # for i in l.connection:
-      #   self.cnct_mat[l.id,i] = 1
+      for i in l.connection:
+        self.cnct_mat[l.id,i] = 1
       
-  # def connectivity(self):
-  #   return self.cnct_mat
+  def connectivity(self):
+    return self.cnct_mat
+  
+  @staticmethod
+  def read_element(link, link_list, link_id, dof_index):
+    l = LinkStruct()
+    
+    l.name = link.attrib.get('name')
+    l.joint_type = link.attrib.get('joint_type')
+    l.link_type = link.attrib.get('link_type')
+    cnct_list = eval(link.attrib.get('connection'))
+    l.connection = [int(cnct) for cnct in cnct_list]
+    l.connect_pos = np.array(eval(link.attrib.get('connect_pos')))
+    l.connect_rot = np.array(eval(link.attrib.get('connect_rot')))
+    l.cog = np.array(eval(link.attrib.get('cog')))
+    l.mass = eval(link.attrib.get('mass'))
+    l.inertia_param = np.array(eval(link.attrib.get('inertia_param')))
+    
+    l.id = link_id
 
+    l.init()
+
+    l.dof_index = dof_index
+    dof_index += l.dof
+    
+    link_list.append(l)
+    
+    for child in link:
+      RobotStruct.read_element(child, link_list, link_id, dof_index)
+      
   @staticmethod
   def read_model_file(xml_data):
-    robot = ET.fromstring(xml_data)
-
-    joints = []
-    links = []
+    robot = ET.fromstring(xml_data) 
+    
+    link_list = []
     dof_index = 0
-    
-    joint_list = robot.findall('joint')
-    
-    for i in range(len(joint_list)):
-      
-      joints.append(JointStruct())
-      
-      joints[i].name = joint_list[i].attrib.get('name')
-      joints[i].joint_type = joint_list[i].attrib.get('joint_type')
-      joints[i].link_type = joint_list[i].attrib.get('link_type')
-      cnct_list = eval(joint_list[i].attrib.get('connection'))
+    link_id = 0
 
-      joints[i].id = i
+    for child in robot:
+      RobotStruct.read_element(child, link_list, link_id, dof_index)
 
-      joints[i].init()
-
-      joints[i].dof_index = dof_index
-      dof_index += joints[i].dof
-    
-    link_list = robot.findall('link')
-
-    for i in range(len(link_list)):
-
-      links.append(LinkStruct())
-      
-      links[i].name = link_list[i].attrib.get('name')
-      links[i].joint_type = link_list[i].attrib.get('joint_type')
-      links[i].link_type = link_list[i].attrib.get('link_type')
-      cnct_list = eval(link_list[i].attrib.get('connection'))
-      links[i].connection = [int(cnct) for cnct in cnct_list]
-      links[i].connect_pos = np.array(eval(link_list[i].attrib.get('connect_pos')))
-      links[i].connect_rot = np.array(eval(link_list[i].attrib.get('connect_rot')))
-      links[i].cog = np.array(eval(link_list[i].attrib.get('cog')))
-      links[i].mass = eval(link_list[i].attrib.get('mass'))
-      links[i].inertia_param = np.array(eval(link_list[i].attrib.get('inertia_param')))
-      
-      links[i].id = i
-
-      links[i].init()
-
-      links[i].dof_index = dof_index
-      dof_index += links[i].dof
-
-    return joints, links
+    return link_list
 
 class RobotGenValue:
   _df : LinkGenDF
