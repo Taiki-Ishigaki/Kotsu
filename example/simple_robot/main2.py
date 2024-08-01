@@ -31,14 +31,6 @@ links_xml = """<?xml version="1.0"?>
       name="link1"
       joint_type="revolution"
       link_type="rigid"
-      connection="[0,2]"
-      connect_pos = "[0., 0., 1.]"
-      connect_rot =
-      "[
-        [1., 0., 0.],
-        [0., 1., 0.],
-        [0., 0., 1.]
-      ]"
       cog = "[0., 1., 0.]"
       mass = "100."
       inertia_param = "[1., 1., 1., 0., 0., 0.]"
@@ -61,14 +53,6 @@ links_xml = """<?xml version="1.0"?>
       name="link2"
       joint_type="revolution"
       link_type="rigid"
-      connection="[1,3]"
-      connect_pos = "[0., 0., 1.]"
-      connect_rot =
-      "[
-        [1., 0., 0.],
-        [0., 1., 0.],
-        [0., 0., 1.]
-      ]"
       cog = "[0., 1., 0.]"
       mass = "100."
       inertia_param = "[1., 1., 1., 0., 0., 0.]"
@@ -91,14 +75,6 @@ links_xml = """<?xml version="1.0"?>
       name="link3"
       joint_type="revolution"
       link_type="rigid"
-      connection="[2]"
-      connect_pos = "[0., 0., 1.]"
-      connect_rot =
-      "[
-        [1., 0., 0.],
-        [0., 1., 0.],
-        [0., 0., 1.]
-      ]"
       cog = "[0., 1., 0.]"
       mass = "100."
       inertia_param = "[1., 1., 1., 0., 0., 0.]"
