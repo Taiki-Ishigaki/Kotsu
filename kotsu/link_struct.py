@@ -37,8 +37,8 @@ class LinkStruct(LinkStruct_):
   def init(self):
     self.joint_select_mat = self._joint_select_mat(self.joint_type)
     self.set_dof()
-    self.set_connent_frame()
-    self.set_connent_adj_frame()
+    # self.set_connent_frame()
+    # self.set_connent_adj_frame()
 
   @staticmethod
   def _joint_dof(type):

@@ -14,12 +14,13 @@ from mathrobo.se3 import *
 class JointStruct_:
   name: str = 'name'
   joint_type: str = "revolution"
-  connection: np.ndarray = np.array([])
   
 class JointStruct(JointStruct_):
   id : int = 0
   dof : int = 0
   dof_index : int = 0
+  
+  connection: np.ndarray = np.array([])
 
   joint_select_mat : np.ndarray = np.array([])
 

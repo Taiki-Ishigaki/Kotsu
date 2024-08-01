@@ -13,8 +13,8 @@ def show_kotsu(robot, robot_state):
   ax.scatter(pos[:,0], pos[:,1], pos[:,2], c='r', marker='o')
 
   # エッジの描画
-  for i in range(robot.link_num):
-    for j in robot.links[i].connection:
+  for i in range(robot.joint_num):
+    for j in robot.joints[i].connection:
       ax.plot([pos[i,0], pos[j,0]], [pos[i,1], pos[j,1]], [pos[i,2], pos[j,2]], 'b')
 
   # 軸ラベルの設定
