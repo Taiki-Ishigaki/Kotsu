@@ -6,26 +6,6 @@ from kotsu.simple_draw import *
 
 links_xml = """<?xml version="1.0"?>
 <robot>
-    <joint
-      name = "root_joint"
-      joint_type = "fix"
-    >
-    </joint>
-    <joint
-      name = "joint1"
-      joint_type = "revolution"
-    >
-    </joint>
-    <joint
-      name = "joint2"
-      joint_type = "revolution"
-    >
-    </joint>
-    <joint
-      name = "joint3"
-      joint_type = "revolution"
-    >
-    </joint>
     <link
       name="root_link"
       link_type="rigid"
@@ -126,7 +106,11 @@ links_xml = """<?xml version="1.0"?>
       <joint>
         name = "joint3"
       </joint>
-    </link>   
+    </link>  
+    <root_joint joint_type = "fix"></root_joint>
+    <joint1 joint_type = "revolution"></joint1>
+    <joint2 joint_type = "revolution"></joint2>
+    <joint3 joint_type = "revolution"></joint3> 
 </robot>
 """
 
