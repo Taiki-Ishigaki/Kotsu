@@ -14,27 +14,33 @@ from kotsu.link_df import *
 class LinkKinematics:
   @staticmethod
   def joint_trans(theta, b):
-    v = b@theta
+    if len(link_coord) != 0:
+      v = b@theta
+    else:
+      v = b@np.zeros(1)
     return SE3.adj_mat(v)
   
+  # @staticmethod
+  # def link_rel_a(link, link_coord):
+  #   if len(link_coord) != 0:
+  #     a = LinkKinematics.joint_trans(link_coord, link.joint_select_mat)
+  #   else:
+  #     a = LinkKinematics.joint_trans(np.zeros(1), link.joint_select_mat)
+  #   return link.connent_adj_frame @ a
+  
+  # @staticmethod
+  # def link_kinematics(link_a, link_rel_a):
+  #   return link_a @ link_rel_a
+  
   @staticmethod
-  def link_rel_a(link, link_coord):
-    if len(link_coord) != 0:
-      a = LinkKinematics.joint_trans(link_coord, link.joint_select_mat)
+  def link_kinematics(link, joint, parent, gen_value, state):
+    joint_coord = gen_value.joint_coord(joint)
+    if parent:
+      p_link_a = state.link_adj_frame(parent)
     else:
-      a = LinkKinematics.joint_trans(np.zeros(1), link.joint_select_mat)
-    return link.connent_adj_frame @ a
-  
-  @staticmethod
-  def link_kinematics(link_a, link_rel_a):
-    return link_a @ link_rel_a
-  
-  @staticmethod
-  def kinematics(link, gen_value, state):
-    coord = gen_value.link_coord(link)
-    link_a = state.link_adj_frame(link)
-    rel_a = LinkKinematics.link_rel_a(link, coord)
-    return link_a @ rel_a
+      p_link_a = identity(6)
+    joint_a = LinkKinematics.joint_trans(joint_coord, joint.joint_select_mat)
+    return p_link_a @ joint_a @ link.connect_a(joint.id)
   
   @staticmethod
   def link_rel_vel(link, link_veloc):
