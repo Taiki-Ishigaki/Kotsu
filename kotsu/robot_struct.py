@@ -76,7 +76,7 @@ class RobotStruct:
       l.joint_connect = []
       l.connect_pos = []
       l.connect_rot = []
-      for joint in link:
+      for c_joint in link:
         for j in joints:
           if j.name == joint.attrib.get('name'):
             l.joint_connect.append(j.id)
@@ -84,8 +84,13 @@ class RobotStruct:
             
         if joint.attrib.get('connect_pos') != None:
           l.connect_pos.append(np.array(eval(joint.attrib.get('connect_pos'))))
+        else:
+          l.connect_pos.append(zeros(3))
+
         if joint.attrib.get('connect_rot') != None: 
           l.connect_rot.append(np.array(eval(joint.attrib.get('connect_rot'))))
+        else:
+          l.connect_rot.append(identity(3))
 
       l.init()
       links.append(l)

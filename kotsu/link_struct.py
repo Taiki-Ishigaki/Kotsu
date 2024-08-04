@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from mathrobo.basic import *
 from mathrobo.so3 import *
@@ -15,12 +15,12 @@ class LinkStruct_:
   name: str = 'name'
   joint_type: str = "revolution"
   link_type: str = "rigid"
-  joint_connect: np.ndarray = np.array([])
-  connect_pos: np.ndarray = np.zeros(3)
-  connect_rot: np.ndarray = np.identity(3)
-  cog: np.ndarray = np.zeros(3)
+  connection: np.ndarray = field(default_factory=lambda: np.array([]))
+  connect_pos: np.ndarray = field(default_factory=lambda: np.zeros(3))
+  connect_rot: np.ndarray = field(default_factory=lambda: np.identity(3))
+  cog: np.ndarray = field(default_factory=lambda: np.zeros(3))
   mass: float = 1.
-  inertia_param: np.ndarray = np.zeros(6)
+  inertia_param: np.ndarray = field(default_factory=lambda: np.zeros(6))
     
 class LinkStruct(LinkStruct_):
   id : int = 0
