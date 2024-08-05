@@ -56,11 +56,11 @@ class LinkKinematics:
   def kinematics(link, joint, parent, gen_value, state):
     joint_coord = gen_value.joint_coord(joint)
     if parent:
-      p_link_frame = state.link_adj_frame(parent)
+      p_link_frame = state.link_adj_frames(parent)
     else:
       p_link_frame = identity(6)
-    rel_frame = link_rel_frame(link, joint, joint_coord)
-    frame = link_frame @ rel_frame
+    rel_frame = LinkKinematics.link_rel_frame(link, joint, joint_coord)
+    frame = p_link_frame @ rel_frame
     return frame
 
   # @staticmethod
@@ -92,7 +92,7 @@ class LinkKinematics:
   @staticmethod
   def link_rel_vel(link, joint, joint_vel):
     local_vel = joint_local_vel(joint, joint_vel)
-    connect_frame = link.connect_adj_frame(joint.id)
+    connect_frame = link.connect_adj_frames(joint.id)
     rel_vel = np.linalg.inv(connect_frame) @ local_vel
     return rel_vel
 
@@ -141,7 +141,7 @@ class LinkKinematics:
   @staticmethod
   def link_rel_acc(link, joint, joint_acc):
     local_acc = joint_local_acc(joint, joint_acc)
-    connect_frame = link.connect_adj_frame(joint.id)
+    connect_frame = link.connect_adj_frames(joint.id)
     rel_acc = np.linalg.inv(connect_frame) @ local_acc
     return rel_acc
 
