@@ -20,7 +20,7 @@ class JointStruct(JointStruct_):
   dof : int = 0
   dof_index : int = 0
   
-  link_connect: np.ndarray = np.array([])
+  connect_link: np.ndarray = np.array([])
 
   joint_select_mat : np.ndarray = np.array([])
 

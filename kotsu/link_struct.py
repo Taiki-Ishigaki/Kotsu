@@ -15,7 +15,7 @@ class LinkStruct_:
   name: str = 'name'
   joint_type: str = "revolution"
   link_type: str = "rigid"
-  connection: np.ndarray = field(default_factory=lambda: np.array([]))
+  connect_joint: np.ndarray = field(default_factory=lambda: np.array([]))
   connect_pos: np.ndarray = field(default_factory=lambda: np.zeros(3))
   connect_rot: np.ndarray = field(default_factory=lambda: np.identity(3))
   cog: np.ndarray = field(default_factory=lambda: np.zeros(3))
@@ -30,15 +30,11 @@ class LinkStruct(LinkStruct_):
   dof_index : int = 0
 
   joint_select_mat : np.ndarray = np.array([])
-  
-  connent_frame : np.ndarray = np.identity(4)
-  connent_adj_frame : np.ndarray = np.identity(6)
 
   def init(self):
     self.joint_select_mat = self._joint_select_mat(self.joint_type)
     self.set_dof()
-    self.set_connent_frame()
-    self.set_connent_adj_frame()
+    self.set_connect_frames()
 
   @staticmethod
   def _joint_dof(type):
@@ -66,10 +62,10 @@ class LinkStruct(LinkStruct_):
     self.link_dof = self._link_dof(self.link_type)
     self.dof = self.joint_dof + self.link_dof
   
-  def set_connent_frame(self):
-    self.connent_frame = SE3(self.connect_rot, self.connect_pos).matrix()
-    return self.connent_frame
-
-  def set_connent_adj_frame(self):
-    self.connent_adj_frame =  SE3(self.connect_rot, self.connect_pos).adjoint()
-    return self.connent_adj_frame
+  def set_connect_frames(self):
+    self.connect_frames = []
+    self.connect_adj_frames = []
+    for i in range(len(self.connect_joint)):
+      h = SE3(self.connect_rot[i], self.connect_pos[i])
+      self.connect_frames.append(h.matrix())
+      self.connect_adj_frames.append(h.adjoint())

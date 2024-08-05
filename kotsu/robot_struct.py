@@ -25,11 +25,12 @@ class RobotStruct:
     self.cnct_mat = np.zeros((self.link_num, self.link_num))
 
     self.dof = 0
+    
+    for j in self.joints:
+      self.dof += j.dof
       
     for l in self.links:
       self.dof += l.dof
-      for i in l.connection:
-        self.cnct_mat[l.id,i] = 1
       
   def connectivity(self):
     return self.cnct_mat
@@ -50,7 +51,7 @@ class RobotStruct:
       j.joint_type = joint.attrib.get('joint_type')
       j.id = i
       j.dof_index = dof_index
-      j.link_connect = []
+      j.connect_link = []
 
       j.init()
       joints.append(j)
@@ -73,22 +74,22 @@ class RobotStruct:
       l.id = i
       l.dof_index = dof_index
       
-      l.joint_connect = []
+      l.connect_joint = []
       l.connect_pos = []
       l.connect_rot = []
-      for c_joint in link:
+      for l_joint in link:
         for j in joints:
-          if j.name == joint.attrib.get('name'):
-            l.joint_connect.append(j.id)
-            j.link_connect.append(l.id)
+          if j.name == l_joint.attrib.get('name'):
+            l.connect_joint.append(j.id)
+            j.connect_link.append(l.id)
             
         if joint.attrib.get('connect_pos') != None:
-          l.connect_pos.append(np.array(eval(joint.attrib.get('connect_pos'))))
+          l.connect_pos.append(np.array(eval(l_joint.attrib.get('connect_pos'))))
         else:
           l.connect_pos.append(zeros(3))
 
         if joint.attrib.get('connect_rot') != None: 
-          l.connect_rot.append(np.array(eval(joint.attrib.get('connect_rot'))))
+          l.connect_rot.append(np.array(eval(l_joint.attrib.get('connect_rot'))))
         else:
           l.connect_rot.append(identity(3))
 
