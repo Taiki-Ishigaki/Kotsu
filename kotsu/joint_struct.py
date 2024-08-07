@@ -3,6 +3,7 @@
 # 2024.07.27 Created by T.Ishigaki
 
 import numpy as np
+import warnings
 
 from dataclasses import dataclass
 
@@ -27,12 +28,18 @@ class JointStruct(JointStruct_):
   def init(self):
     self.joint_select_mat = self._joint_select_mat(self.joint_type)
     self.set_dof()
+    
+  def set_dof(self):
+    self.dof = self._joint_dof(self.joint_type)
 
   @staticmethod
   def _joint_dof(type):
     if type == "revolution":
       return 1
     elif type == "fix":
+      return 0
+    else:
+      warnings.warn('Not applicable joint type', DeprecationWarning)
       return 0
     
   @staticmethod
@@ -45,5 +52,5 @@ class JointStruct(JointStruct_):
       return mat
   
   def set_dof(self):
-    self.joint_dof = self._joint_dof(self.joint_type)
-    self.dof_index = self.joint_dof
+    self.dof = self._joint_dof(self.joint_type)
+    self.dof_index = self.dof

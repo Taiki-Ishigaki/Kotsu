@@ -24,10 +24,11 @@ class Robot(RobotStruct):
   @staticmethod
   def init_from_model_file(xml_file):
     links, joints = RobotStruct.read_model_file(xml_file)
-    gen_value = RobotGenValue(LinkGenDF(links))
-    state = RobotState(LinkStateDF(links))
+    robot = RobotStruct(links, joints)
+    gen_value = RobotGenValue(RobotGenDF(robot))
+    state = RobotState(RobotStateDF(robot))
     return Robot(links, joints, gen_value, state)
-  
+
   def import_gen_vecs(self, vecs):
     self.gen_value.import_vecs(self, vecs)
     
@@ -60,7 +61,7 @@ class Robot(RobotStruct):
     data = {}
     
     for link_id in self.joints[0].connect_link:
-      self.kinematics_tree(self.links[link_id], self.joint[0], data)
+      self.kinematics_tree(self.links[link_id], self.joints[0], data)
 
     # for l in self.links:
     #   frame = LinkKinematics.kinematics(l, self.gen_value, self.state)

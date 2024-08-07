@@ -3,6 +3,7 @@
 # 2024.07.20 Created by T.Ishigaki
 
 import numpy as np
+import warnings
 
 from dataclasses import dataclass, field
 
@@ -25,8 +26,6 @@ class LinkStruct_:
 class LinkStruct(LinkStruct_):
   id : int = 0
   dof : int = 0
-  joint_dof : int = 0
-  link_dof : int = 0
   dof_index : int = 0
 
   joint_select_mat : np.ndarray = np.array([])
@@ -41,6 +40,9 @@ class LinkStruct(LinkStruct_):
     if type == "revolution":
       return 1
     elif type == "fix":
+      return 0
+    else:
+      warnings.warn('Not applicable joint type', DeprecationWarning)
       return 0
   
   @staticmethod
@@ -58,9 +60,7 @@ class LinkStruct(LinkStruct_):
       return mat
   
   def set_dof(self):
-    self.joint_dof = self._joint_dof(self.joint_type)
-    self.link_dof = self._link_dof(self.link_type)
-    self.dof = self.joint_dof + self.link_dof
+    self.dof = self._link_dof(self.link_type)
   
   def set_connect_frames(self):
     self.connect_frames = []

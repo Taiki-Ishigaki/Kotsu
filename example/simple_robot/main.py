@@ -9,7 +9,7 @@ links_xml = """<?xml version="1.0"?>
   <joint_list>
     <joint
       name = "root_joint"
-      joint_type = "fixed"
+      joint_type = "fix"
     >
     </joint>
     <joint
@@ -112,6 +112,8 @@ links_xml = """<?xml version="1.0"?>
 
 def main():
   robot = Robot.init_from_model_file(links_xml) 
+  
+  print(robot.state.df())
   
   coord = [0., 0., 0.]
   veloc = [2., 2., 2.]

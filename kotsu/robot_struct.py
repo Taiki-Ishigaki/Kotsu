@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 
 from kotsu.joint_struct import *
 from kotsu.link_struct import *
-from kotsu.link_df import *
+from kotsu.robot_df import *
 
 class RobotStruct:
   def __init__(self, links_, joints_):
@@ -25,12 +25,16 @@ class RobotStruct:
     self.cnct_mat = np.zeros((self.link_num, self.link_num))
 
     self.dof = 0
+    self.joint_dof = 0
+    self.link_dof = 0
     
     for j in self.joints:
-      self.dof += j.dof
+      self.joint_dof += j.dof
       
     for l in self.links:
-      self.dof += l.dof
+      self.link_dof += l.dof
+      
+    self.dof = self.joint_dof + self.link_dof
       
   def connectivity(self):
     return self.cnct_mat
@@ -101,7 +105,7 @@ class RobotStruct:
     return links, joints
       
 class RobotGenValue:
-  _df : LinkGenDF
+  _df : RobotGenDF
   coord : np.ndarray = np.array([])
   veloc : np.ndarray = np.array([])
   accel : np.ndarray = np.array([])
@@ -116,8 +120,11 @@ class RobotGenValue:
   def export_vec(self, robot, name, vec):
     vec = np.zeros(robot.dof)
     
+    for j in robot.joints:
+      vec[j.dof_index : j.dof_index + j.dof] = self.df()[j.name + "_" + name][-1].to_numpy()
+    
     for l in robot.links:
-      vec[l.dof_index : l.dof_index + l.dof] = self.df()[l.name + "_" + name][-1].to_numpy()
+      vec[robot.joint_dof + l.dof_index : robot.joint_dof + j.dof + l.dof_index + l.dof] = self.df()[l.name + "_" + name][-1].to_numpy()
       
     return vec
 
@@ -133,19 +140,37 @@ class RobotGenValue:
   def export_force(self, robot):
     return self.export_vec(robot, "force", self.force)
   
-  def _vec_to_link_gen_value(self, l, vec):
-    if(l.dof > 0):
-      return vec[l.dof_index:l.dof_index+l.dof]
+  def _vec_to_gen_value(self, dof, index, vec):
+    if(dof > 0):
+      return vec[index:index+dof]
     else:
       return []
   
   def import_vecs(self, robot, vecs):
     data = {}
-    for l in robot.links:
-      for i in range(len(vecs)):
-        data.update([(l.name + "_" + self._df.aliases[i] , self._vec_to_link_gen_value(l, vecs[i]))])
-
+    for i in range(len(vecs)):
+      for j in robot.joints:
+        vec = self._vec_to_gen_value(j.dof, j.dof_index, vecs[i])
+        data.update([(j.name + "_" + self._df.aliases[i] , vec)])
+      for l in robot.links:
+        vec = self._vec_to_gen_value(l.dof, robot.joint_dof+l.dof_index, vecs[i])
+        data.update([(l.name + "_" + self._df.aliases[i] , vec)])
     self._df.add_row(data)
+    
+  def joint_gen_value(self, joint, name):
+    return self.df()[joint.name + "_" + name][-1].to_numpy()
+
+  def joint_coord(self, joint):
+    return self.link_gen_value(joint, "coord")
+  
+  def joint_veloc(self, joint):
+    return self.link_gen_value(joint, "veloc")
+  
+  def joint_accel(self, joint):
+    return self.link_gen_value(joint, "accel")
+  
+  def joint_force(self, joint):
+    return self.link_gen_value(joint, "force")
     
   def link_gen_value(self, link, name):
     return self.df()[link.name + "_" + name][-1].to_numpy()
@@ -163,7 +188,7 @@ class RobotGenValue:
     return self.link_gen_value(link, "force")
   
 class RobotState:
-  _df : LinkStateDF 
+  _df : RobotStateDF 
   
   def __init__(self, state_df):
     self._df = state_df
