@@ -50,6 +50,9 @@ class JointStruct(JointStruct_):
       mat = np.zeros((6,1))
       mat[2,0] = 1
       return mat
+    else:
+      warnings.warn('Not applicable joint type', DeprecationWarning)
+      return np.zeros((6,1))
   
   def set_dof(self):
     self.dof = self._joint_dof(self.joint_type)

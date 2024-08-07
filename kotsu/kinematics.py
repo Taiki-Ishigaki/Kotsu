@@ -41,24 +41,24 @@ class LinkKinematics:
     if len(theta) != 0:
       v = b@theta
     else:
-      v = b@zeros(1)
+      v = b@np.zeros(1)
     frame = SE3.adj_mat(v)
     return frame
 
   @staticmethod
   def link_rel_frame(link, joint, joint_coord):
     joint_frame = LinkKinematics.joint_local_frame(joint_coord, joint.joint_select_mat)
-    connect_frame = link.connect_a(joint.id)
+    connect_frame = link.connect_adj_frames[joint.id]
     rel_frame = joint_frame @ connect_frame
-    return 
+    return rel_frame
 
   @staticmethod
   def kinematics(link, joint, parent, gen_value, state):
     joint_coord = gen_value.joint_coord(joint)
     if parent:
-      p_link_frame = state.link_adj_frames(parent)
+      p_link_frame = state.link_adj_frame(parent)
     else:
-      p_link_frame = identity(6)
+      p_link_frame = np.identity(6)
     rel_frame = LinkKinematics.link_rel_frame(link, joint, joint_coord)
     frame = p_link_frame @ rel_frame
     return frame
@@ -92,7 +92,7 @@ class LinkKinematics:
   @staticmethod
   def link_rel_vel(link, joint, joint_vel):
     local_vel = joint_local_vel(joint, joint_vel)
-    connect_frame = link.connect_adj_frames(joint.id)
+    connect_frame = link.connect_adj_frames[joint.id]
     rel_vel = np.linalg.inv(connect_frame) @ local_vel
     return rel_vel
 
@@ -103,7 +103,7 @@ class LinkKinematics:
     if parent:
       link_vel = state.link_vel(parent)
     else:
-      link_vel = zeros(6)
+      link_vel = np.zeros(6)
     rel_frame = LinkKinematics.link_rel_frame(link, joint, joint_coord)
     rel_vel = LinkKinematics.link_rel_vel(link, joint, joint_veloc)
     vel = np.linalg.inv(rel_frame) @ link_vel  + rel_vel
@@ -141,7 +141,7 @@ class LinkKinematics:
   @staticmethod
   def link_rel_acc(link, joint, joint_acc):
     local_acc = joint_local_acc(joint, joint_acc)
-    connect_frame = link.connect_adj_frames(joint.id)
+    connect_frame = link.connect_adj_frames[joint.id]
     rel_acc = np.linalg.inv(connect_frame) @ local_acc
     return rel_acc
 
@@ -154,8 +154,8 @@ class LinkKinematics:
       link_vel = state.link_vel(parent)
       link_acc = state.link_acc(parent)
     else:
-      link_vel = zeros(6)
-      link_acc = zeros(6)
+      link_vel = np.zeros(6)
+      link_acc = np.zeros(6)
     rel_frame = LinkKinematics.link_rel_a(link, coord)
     rel_vel = LinkKinematics.link_rel_vel(link, veloc)
     rel_acc = LinkKinematics.link_rel_acc(link, accel)

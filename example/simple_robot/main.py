@@ -115,7 +115,7 @@ def main():
   
   print(robot.state.df())
   
-  coord = [0., 0., 0.]
+  coord = [1., 1., 1.]
   veloc = [2., 2., 2.]
   accel = [3., 3., 3.]
   force = [4., 4., 4.]

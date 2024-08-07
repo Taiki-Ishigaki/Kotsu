@@ -34,41 +34,41 @@ class Robot(RobotStruct):
     
   def kinematics_tree(self, link, joint, data):
     for link_id in joint.connect_link:
-      l = self.links[link_id]
-      frame = LinkKinematics.kinematics(l, joint, link, self.gen_value, self.state)  
-    
-      a = SE3()
-      a.set_adj_mat(frame)
+      if link != None:
+        if link.id != link_id:
+          l = self.links[link_id]
+          frame = LinkKinematics.kinematics(l, joint, link, self.gen_value, self.state)  
+        
+          a = SE3()
+          a.set_adj_mat(frame)
 
-      pos = a.pos()
-      rot = a.rot()
-      rot_vec =  rot[0,:]
-      rot_vec = np.append(rot_vec, rot[1,:])
-      rot_vec = np.append(rot_vec, rot[2,:])
-      
-      data.update([(l.name + "_pos" , pos.tolist())])
-      data.update([(l.name + "_rot" , rot_vec.tolist())])
-    #   data.update([(l.name + "_vel" , veloc.tolist())])
-    #   data.update([(l.name + "_acc" , accel.tolist())])
+          pos = a.pos()
+          rot = a.rot()
+          rot_vec =  rot[0,:]
+          rot_vec = np.append(rot_vec, rot[1,:])
+          rot_vec = np.append(rot_vec, rot[2,:])
+          
+          data.update([(l.name + "_pos" , pos.tolist())])
+          data.update([(l.name + "_rot" , rot_vec.tolist())])
+        #   data.update([(l.name + "_vel" , veloc.tolist())])
+        #   data.update([(l.name + "_acc" , accel.tolist())])
 
-      for joint_id in l.connect_joint:
-        if joint.id != joint_id:
-          j = self.joints[joint_id]
-          self.kinematics_tree(l, j, data)    
+          for joint_id in l.connect_joint:
+            if joint.id != joint_id:
+              j = self.joints[joint_id]
+              self.kinematics_tree(l, j, data)    
 
 
   def update_kinematics(self):
     data = {}
-    
-    for link_id in self.joints[0].connect_link:
-      self.kinematics_tree(self.links[link_id], self.joints[0], data)
+    self.kinematics_tree(None, self.joints[0], data)
 
     # for l in self.links:
     #   frame = LinkKinematics.kinematics(l, self.gen_value, self.state)
     #   veloc = LinkKinematics.vel_kinematics(l, self.gen_value, self.state)
     #   accel = LinkKinematics.acc_kinematics(l, self.gen_value, self.state)
 
-    #   a = SE3()
+      #   a = SE3()
     #   a.set_adj_mat(frame)
 
     #   pos = a.pos()
