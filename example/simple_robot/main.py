@@ -41,7 +41,7 @@ links_xml = """<?xml version="1.0"?>
       </joint>
       <joint
         name = "joint1"
-        connect_pos = "[0., 0., 0.]"
+        connect_pos = "[0., 0., 1.]"
         connect_rot =
         "[
           [1., 0., 0.],
@@ -63,7 +63,7 @@ links_xml = """<?xml version="1.0"?>
       </joint>
       <joint
         name = "joint2"
-        connect_pos = "[0., 0., 0.]"
+        connect_pos = "[0., 0., 1.]"
         connect_rot =
         "[
           [1., 0., 0.],
@@ -85,7 +85,7 @@ links_xml = """<?xml version="1.0"?>
       </joint>
       <joint
         name = "joint3"
-        connect_pos = "[0., 0., 0.]"
+        connect_pos = "[0., 0., 1.]"
         connect_rot =
         "[
           [1., 0., 0.],
@@ -115,7 +115,7 @@ def main():
   
   print(robot.state.df())
   
-  coord = [1., 1., 1.]
+  coord = [1., -1., 1.]
   veloc = [2., 2., 2.]
   accel = [3., 3., 3.]
   force = [4., 4., 4.]
@@ -146,11 +146,12 @@ def main():
 
   robot.state._df.add_row(data)
   
-  print(robot.state.df())
-  
   robot.update_kinematics()
   
-  print(robot.state.df())
+  print(robot.state.df()["root_link_pos"])
+  print(robot.state.df()["link1_pos"])
+  print(robot.state.df()["link2_pos"])
+  print(robot.state.df()["link3_pos"])
 
   show_kotsu(robot, robot.state)
 
