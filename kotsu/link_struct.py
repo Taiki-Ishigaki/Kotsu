@@ -63,9 +63,16 @@ class LinkStruct(LinkStruct_):
     self.dof = self._link_dof(self.link_type)
   
   def set_connect_frames(self):
-    self.connect_frames = []
-    self.connect_adj_frames = []
-    for i in range(len(self.connect_joint)):
-      h = SE3(self.connect_rot[i], self.connect_pos[i])
-      self.connect_frames.append(h.matrix())
-      self.connect_adj_frames.append(h.adjoint())
+    self.connect_frames = {}
+    self.connect_adj_frames = {}
+    for j in self.connect_joint:
+      h = SE3(self.connect_rot[j], self.connect_pos[j])
+      self.connect_frames.update({j : h.matrix()})
+      self.connect_adj_frames.update({j : h.adjoint()})
+      
+  @staticmethod
+  def link_id(link):
+    if link != None:
+      return link.id
+    else:
+      return None

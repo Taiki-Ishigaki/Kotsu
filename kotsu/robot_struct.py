@@ -41,18 +41,18 @@ class RobotStruct:
   
   @staticmethod
   def read_model_file(xml_data):
-    robot = ET.fromstring(xml_data) 
+    robot_et = ET.fromstring(xml_data) 
     
     joints = []
     links = []
     
     i = 0
     dof_index = 0
-    joint_list = robot.findall('./joint_list/joint')
-    for joint in joint_list:
+    joint_list_et = robot_et.findall('./joint_list/joint')
+    for joint_et in joint_list_et:
       j = JointStruct()
-      j.name = joint.attrib.get('name')
-      j.joint_type = joint.attrib.get('joint_type')
+      j.name = joint_et.attrib.get('name')
+      j.joint_type = joint_et.attrib.get('joint_type')
       j.id = i
       j.dof_index = dof_index
       j.connect_link = []
@@ -65,37 +65,37 @@ class RobotStruct:
       
     i = 0
     dof_index = 0
-    link_list = robot.findall('./link_list/link')
-    for link in link_list:
+    link_list_et = robot_et.findall('./link_list/link')
+    for link_et in link_list_et:
       l = LinkStruct()
-      l.name = link.attrib.get('name')
-      l.link_type = link.attrib.get('link_type')
+      l.name = link_et.attrib.get('name')
+      l.link_type = link_et.attrib.get('link_type')
 
-      l.cog = np.array(eval(link.attrib.get('cog')))
-      l.mass = eval(link.attrib.get('mass'))
-      l.inertia_param = np.array(eval(link.attrib.get('inertia_param')))
+      l.cog = np.array(eval(link_et.attrib.get('cog')))
+      l.mass = eval(link_et.attrib.get('mass'))
+      l.inertia_param = np.array(eval(link_et.attrib.get('inertia_param')))
       
       l.id = i
       l.dof_index = dof_index
       
       l.connect_joint = []
-      l.connect_pos = []
-      l.connect_rot = []
-      for l_joint in link:
+      l.connect_pos = {}
+      l.connect_rot = {}
+      for link_joint_et in link_et:
         for j in joints:
-          if j.name == l_joint.attrib.get('name'):
+          if j.name == link_joint_et.attrib.get('name'):
             l.connect_joint.append(j.id)
             j.connect_link.append(l.id)
             
-        if joint.attrib.get('connect_pos') != None:
-          l.connect_pos.append(np.array(eval(l_joint.attrib.get('connect_pos'))))
-        else:
-          l.connect_pos.append(zeros(3))
+            if link_joint_et.attrib.get('connect_pos') != None:
+              l.connect_pos.update({j.id : np.array(eval(link_joint_et.attrib.get('connect_pos')))})
+            else:
+              l.connect_pos.update({j.id : np.zeros(3)})
 
-        if joint.attrib.get('connect_rot') != None: 
-          l.connect_rot.append(np.array(eval(l_joint.attrib.get('connect_rot'))))
-        else:
-          l.connect_rot.append(identity(3))
+            if link_joint_et.attrib.get('connect_rot') != None: 
+              l.connect_rot.update({j.id : np.array(eval(link_joint_et.attrib.get('connect_rot')))})
+            else:
+              l.connect_rot.update({j.id : np.identity(3)})
 
       l.init()
       links.append(l)
