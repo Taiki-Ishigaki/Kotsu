@@ -1,11 +1,7 @@
 import numpy as np
-import polars
 
 from kotsu.robot import *
 from kotsu.simple_draw import *
-
-import xml.etree.ElementTree as ET
-
 
 def main():
   robot = Robot.init_from_model_file("simple_robot.ktm") 
