@@ -41,7 +41,7 @@ links_xml = """<?xml version="1.0"?>
       </joint>
       <joint
         name = "joint1"
-        connect_pos = "[0., 0., 1.]"
+        connect_pos = "[1., 0., 0.]"
         connect_rot =
         "[
           [1., 0., 0.],
@@ -63,7 +63,7 @@ links_xml = """<?xml version="1.0"?>
       </joint>
       <joint
         name = "joint2"
-        connect_pos = "[0., 0., 1.]"
+        connect_pos = "[1., 0., 0.]"
         connect_rot =
         "[
           [1., 0., 0.],
@@ -85,7 +85,7 @@ links_xml = """<?xml version="1.0"?>
       </joint>
       <joint
         name = "joint3"
-        connect_pos = "[0., 0., 1.]"
+        connect_pos = "[1., 0., 0.]"
         connect_rot =
         "[
           [1., 0., 0.],
@@ -113,47 +113,21 @@ links_xml = """<?xml version="1.0"?>
 def main():
   robot = Robot.init_from_model_file(links_xml) 
   
-  print(robot.state.df())
-  
-  coord = [1., -1., 1.]
-  veloc = [2., 2., 2.]
-  accel = [3., 3., 3.]
-  force = [4., 4., 4.]
+  coord = [1., 1., 1.]
+  veloc = [0., 0., 0.]
+  accel = [0., 0., 0.]
+  force = [0., 0., 0.]
   
   vecs = [coord, veloc, accel, force]
 
   robot.import_gen_vecs(vecs)
   print(robot.gen_value.df())
   
-  data = {
-      robot.links[0].name + "_" + "pos" : [0., 0., 0.],
-      robot.links[0].name + "_" + "rot" : [1., 0., 0., 0., 1., 0., 0., 0., 1.],
-      robot.links[0].name + "_" + "vel" : [0., 0., 0., 0., 0., 0.],
-      robot.links[0].name + "_" + "acc" : [0., 0., 0., 0., 0., 0.],
-      robot.links[1].name + "_" + "pos" : [1., 0., 0.],
-      robot.links[1].name + "_" + "rot" : [1., 0., 0., 0., 1., 0., 0., 0., 1.],
-      robot.links[1].name + "_" + "vel" : [0., 0., 0., 0., 0., 0.],
-      robot.links[1].name + "_" + "acc" : [0., 0., 0., 0., 0., 0.],
-      robot.links[2].name + "_" + "pos" : [0., 1., 0.],
-      robot.links[2].name + "_" + "rot" : [1., 0., 0., 0., 1., 0., 0., 0., 1.],
-      robot.links[2].name + "_" + "vel" : [0., 0., 0., 0., 0., 0.],
-      robot.links[2].name + "_" + "acc" : [0., 0., 0., 0., 0., 0.],
-      robot.links[3].name + "_" + "pos" : [0., 0., 1.],
-      robot.links[3].name + "_" + "rot" : [1., 0., 0., 0., 1., 0., 0., 0., 1.],
-      robot.links[3].name + "_" + "vel" : [0., 0., 0., 0., 0., 0.],
-      robot.links[3].name + "_" + "acc" : [0., 0., 0., 0., 0., 0.],
-  }
-
-  robot.state._df.add_row(data)
-  
   robot.update_kinematics()
   
-  print(robot.state.df()["root_link_pos"])
-  print(robot.state.df()["link1_pos"])
-  print(robot.state.df()["link2_pos"])
-  print(robot.state.df()["link3_pos"])
+  print(robot.state.df())
 
   show_kotsu(robot, robot.state)
-
+  
 if __name__ == "__main__":
     main()
