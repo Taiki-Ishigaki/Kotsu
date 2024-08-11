@@ -114,8 +114,14 @@ class RobotGenValue:
     
   def df(self):
     return self._df.df
+  
+  def to_dict(self, index):
+    gen_value_row_tuple = self._df.df.row(index)
+    gen_value_columns = self._df.df.columns
+    gen_value = dict(zip(gen_value_columns, gen_value_row_tuple))
+    return gen_value
     
-  def export_vec(self, robot, name, vec):
+  def export_vec(self, robot, name):
     vec = np.zeros(robot.dof)
     
     for j in robot.joints:
@@ -127,16 +133,20 @@ class RobotGenValue:
     return vec
 
   def export_coord(self, robot):
-    return self.export_vec(robot, "coord", self.coord)
+    self.coord = self.export_vec(robot, "coord")
+    return self.coord
   
   def export_veloc(self, robot):
-    return self.export_vec(robot, "veloc", self.veloc)
+    self.veloc = self.export_vec(robot, "veloc")
+    return self.veloc
   
   def export_accel(self, robot):
-    return self.export_vec(robot, "accel", self.accel)
+    self.accel = self.export_vec(robot, "accel")
+    return self.accel
   
   def export_force(self, robot):
-    return self.export_vec(robot, "force", self.force)
+    self.force = self.export_vec(robot, "force")
+    return self.force
   
   def _vec_to_gen_value(self, dof, index, vec):
     if(dof > 0):

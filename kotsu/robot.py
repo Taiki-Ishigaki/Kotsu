@@ -56,9 +56,7 @@ class Robot(RobotStruct):
             self.kinematics_tree(l, j, gen_value, state_data)    
 
   def update_kinematics(self):
-    gen_value_row_tuple = self.gen_value.df().row(-1)
-    gen_value_columns = self.gen_value.df().columns
-    gen_value = dict(zip(gen_value_columns, gen_value_row_tuple))
+    gen_value = self.gen_value.to_dict(-1)
     state_data = {}
     self.kinematics_tree(None, self.joints[0], gen_value, state_data)
 
