@@ -4,8 +4,6 @@
 
 import numpy as np
 
-from kotsu.link_struct import *
-from kotsu.link_df import *
 from kotsu.robot_struct import *
 from kotsu.kinematics import *
   
