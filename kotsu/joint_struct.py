@@ -53,7 +53,3 @@ class JointStruct(JointStruct_):
     else:
       warnings.warn('Not applicable joint type', DeprecationWarning)
       return np.zeros((6,1))
-  
-  def set_dof(self):
-    self.dof = self._joint_dof(self.joint_type)
-    self.dof_index = self.dof
