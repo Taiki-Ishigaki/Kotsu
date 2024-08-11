@@ -32,55 +32,35 @@ class Robot(RobotStruct):
   def import_gen_vecs(self, vecs):
     self.gen_value.import_vecs(self, vecs)
     
-  def kinematics_tree(self, link, joint, data):
+  def kinematics_tree(self, link, joint, gen_value, state_data):
     for link_id in joint.connect_link:
       if LinkStruct.link_id(link) != link_id or link == None:
         l = self.links[link_id]
-        frame = LinkKinematics.kinematics(l, joint, link, self.gen_value, self.state)  
-        veloc = LinkKinematics.vel_kinematics(l, joint, link, self.gen_value, self.state)  
-        accel = LinkKinematics.acc_kinematics(l, joint, link, self.gen_value, self.state)  
+        frame = LinkKinematics.kinematics(l, joint, link, gen_value, state_data)  
+        veloc = LinkKinematics.vel_kinematics(l, joint, link, gen_value, state_data)  
+        accel = LinkKinematics.acc_kinematics(l, joint, link, gen_value, state_data) 
       
         a = SE3()
         a.set_adj_mat(frame)
 
         pos = a.pos()
-        rot = a.rot()
-        rot_vec =  rot[0,:]
-        rot_vec = np.append(rot_vec, rot[1,:])
-        rot_vec = np.append(rot_vec, rot[2,:])
+        rot_vec = RobotState.mat_to_vec(a.rot())
         
-        data.update([(l.name + "_pos" , pos.tolist())])
-        data.update([(l.name + "_rot" , rot_vec.tolist())])
-        data.update([(l.name + "_vel" , veloc.tolist())])
-        data.update([(l.name + "_acc" , accel.tolist())])
+        state_data.update([(l.name + "_pos" , pos.tolist())])
+        state_data.update([(l.name + "_rot" , rot_vec.tolist())])
+        state_data.update([(l.name + "_vel" , veloc.tolist())])
+        state_data.update([(l.name + "_acc" , accel.tolist())])
 
         for joint_id in l.connect_joint:
           if joint.id != joint_id:
             j = self.joints[joint_id]
-            self.kinematics_tree(l, j, data)    
-
+            self.kinematics_tree(l, j, gen_value, state_data)    
 
   def update_kinematics(self):
-    data = {}
-    self.kinematics_tree(None, self.joints[0], data)
+    gen_value_row_tuple = self.gen_value.df().row(-1)
+    gen_value_columns = self.gen_value.df().columns
+    gen_value = dict(zip(gen_value_columns, gen_value_row_tuple))
+    state_data = {}
+    self.kinematics_tree(None, self.joints[0], gen_value, state_data)
 
-    # for l in self.links:
-    #   frame = LinkKinematics.kinematics(l, self.gen_value, self.state)
-    #   veloc = LinkKinematics.vel_kinematics(l, self.gen_value, self.state)
-    #   accel = LinkKinematics.acc_kinematics(l, self.gen_value, self.state)
-
-      #   a = SE3()
-    #   a.set_adj_mat(frame)
-
-    #   pos = a.pos()
-    #   rot = a.rot()
-    #   rot_vec =  rot[0,:]
-    #   rot_vec = np.append(rot_vec, rot[1,:])
-    #   rot_vec = np.append(rot_vec, rot[2,:])
-      
-    #   data.update([(l.name + "_pos" , pos.tolist())])
-    #   data.update([(l.name + "_rot" , rot_vec.tolist())])
-    #   data.update([(l.name + "_vel" , veloc.tolist())])
-    #   data.update([(l.name + "_acc" , accel.tolist())])
-
-    self.state.import_state(data)
+    self.state.import_state(state_data)

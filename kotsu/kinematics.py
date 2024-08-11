@@ -9,7 +9,8 @@ from mathrobo.so3 import *
 from mathrobo.se3 import *
 
 from kotsu.link_struct import *
-from kotsu.link_df import *
+from kotsu.robot_df import *
+from kotsu.robot_struct import *
 
 class LinkKinematics:
   @staticmethod
@@ -34,9 +35,11 @@ class LinkKinematics:
 
   @staticmethod
   def kinematics(link, joint, parent, gen_value, state):
-    joint_coord = gen_value.joint_coord(joint)
+    joint_coord = gen_value[joint.name + "_coord"]
     if parent:
-      p_link_frame = state.link_adj_frame(parent)
+      rot = RobotState.vec_to_mat(state[parent.name + "_rot"])
+      h = SE3(rot, state[parent.name + "_pos"])
+      p_link_frame = h.adjoint()
     else:
       p_link_frame = np.identity(6)
     rel_frame = LinkKinematics.link_rel_frame(link, joint, parent, joint_coord)
@@ -60,10 +63,10 @@ class LinkKinematics:
 
   @staticmethod
   def vel_kinematics(link, joint, parent, gen_value, state):
-    joint_coord = gen_value.joint_coord(joint)
-    joint_veloc = gen_value.link_veloc(joint)
+    joint_coord = gen_value[joint.name + "_coord"]
+    joint_veloc = gen_value[joint.name + "_veloc"]
     if parent:
-      link_vel = state.link_vel(parent)
+      link_vel = state[parent.name + "_vel"]
     else:
       link_vel = np.zeros(6)
     rel_frame = LinkKinematics.link_rel_frame(link, joint, parent, joint_coord)
@@ -88,12 +91,12 @@ class LinkKinematics:
 
   @staticmethod
   def acc_kinematics(link, joint, parent, gen_value, state):
-    joint_coord = gen_value.joint_coord(joint)
-    joint_veloc = gen_value.joint_veloc(joint)
-    joint_accel = gen_value.joint_accel(joint)
+    joint_coord = gen_value[joint.name + "_coord"]
+    joint_veloc = gen_value[joint.name + "_veloc"]
+    joint_accel = gen_value[joint.name + "_accel"]
     if parent:
-      link_vel = state.link_vel(parent)
-      link_acc = state.link_acc(parent)
+      link_vel = state[parent.name + "_vel"]
+      link_acc = state[parent.name + "_acc"]
     else:
       link_vel = np.zeros(6)
       link_acc = np.zeros(6)
