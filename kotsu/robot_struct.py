@@ -40,9 +40,7 @@ class RobotStruct:
     return self.cnct_mat
   
   @staticmethod
-  def read_model_file(xml_data):
-    robot_et = ET.fromstring(xml_data) 
-    
+  def read_model_file(robot_et):    
     joints = []
     links = []
     

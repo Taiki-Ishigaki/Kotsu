@@ -22,8 +22,9 @@ class Robot(RobotStruct):
     self.robot_init()
 
   @staticmethod
-  def init_from_model_file(xml_file):
-    links, joints = RobotStruct.read_model_file(xml_file)
+  def init_from_model_file(model_file_name):
+    robot_et = ET.parse(model_file_name).getroot()
+    links, joints = RobotStruct.read_model_file(robot_et)
     robot = RobotStruct(links, joints)
     gen_value = RobotGenValue(RobotGenDF(robot))
     state = RobotState(RobotStateDF(robot))
