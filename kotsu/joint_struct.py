@@ -15,6 +15,7 @@ from mathrobo.se3 import *
 class JointStruct_:
   name: str = 'name'
   joint_type: str = "revolution"
+  is_root: bool = False
   
 class JointStruct(JointStruct_):
   id : int = 0

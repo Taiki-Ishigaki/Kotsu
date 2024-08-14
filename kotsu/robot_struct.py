@@ -30,9 +30,13 @@ class RobotStruct:
     
     for j in self.joints:
       self.joint_dof += j.dof
+      if j.is_root:
+        self.root_joint_id = j.id
       
     for l in self.links:
       self.link_dof += l.dof
+      if l.is_root:
+        self.root_link_id = l.id
       
     self.dof = self.joint_dof + self.link_dof
       
@@ -101,6 +105,35 @@ class RobotStruct:
       i += 1
       dof_index += l.dof
     return links, joints
+  
+  @staticmethod
+  def search_neiborhood(robot, link_id):
+    link_list = []
+    link = robot.links[link_id]
+    for j_id in link.connect_joint:
+      joint = robot.joints[j_id]
+      link_list.append(joint.connect_link)
+
+    return link_list
+  
+  '''
+  閉リンク構造未対応
+  '''
+  def search_root_route(robot, link_id, tree_route):
+    link = robot.links[link_id]
+
+    if(link.is_edge() and (not link.is_root())):
+      return False
+    else:
+      link_id_list = RobotStruct.search_neiborhood(robot, link_id)
+      for l_id in link_id_list:
+        if (robot.links[l_id].is_root()):
+          route.append(l_id)
+        else:
+          route = search_root_route(robot, l_id, tree_route)
+          if (route):
+            route.append(link_id)
+      return route
       
 class RobotGenValue:
   _df : RobotGenDF

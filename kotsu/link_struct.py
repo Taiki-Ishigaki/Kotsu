@@ -16,6 +16,8 @@ class LinkStruct_:
   name: str = 'name'
   joint_type: str = "revolution"
   link_type: str = "rigid"
+  is_root: bool = False
+  is_edge: bool = False
   connect_joint: np.ndarray = field(default_factory=lambda: np.array([]))
   connect_pos: np.ndarray = field(default_factory=lambda: np.zeros(3))
   connect_rot: np.ndarray = field(default_factory=lambda: np.identity(3))

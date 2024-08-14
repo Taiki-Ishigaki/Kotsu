@@ -58,6 +58,6 @@ class Robot(RobotStruct):
   def update_kinematics(self):
     gen_value = self.gen_value.to_dict(-1)
     state_data = {}
-    self.kinematics_tree(None, self.joints[0], gen_value, state_data)
+    self.kinematics_tree(None, self.joints[self.root_joint_id], gen_value, state_data)
 
     self.state.import_state(state_data)
