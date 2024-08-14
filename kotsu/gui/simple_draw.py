@@ -22,4 +22,5 @@ def show_kotsu(robot, robot_state):
   ax.set_ylabel('Y')
   ax.set_zlabel('Z')
 
-  plt.show()
+  # plt.show()
+  plt.savefig('simple_draw.png')

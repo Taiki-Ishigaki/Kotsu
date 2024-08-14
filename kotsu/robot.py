@@ -4,8 +4,14 @@
 
 import numpy as np
 
-from kotsu.robot_struct import *
-from kotsu.kinematics import *
+from pickle import FALSE
+import xml.etree.ElementTree as ET
+
+from kotsu.basic.robot_struct import *
+from kotsu.kinematics.kinematics import *
+
+from kotsu.gen_value import *
+from kotsu.state import *
   
 class Robot(RobotStruct):
 

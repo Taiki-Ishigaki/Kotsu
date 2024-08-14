@@ -8,9 +8,11 @@ from mathrobo.basic import *
 from mathrobo.so3 import *
 from mathrobo.se3 import *
 
-from kotsu.link_struct import *
-from kotsu.robot_df import *
-from kotsu.robot_struct import *
+from kotsu.basic.link_struct import *
+from kotsu.basic.robot_struct import *
+
+from kotsu.gen_value import *
+from kotsu.state import *
 
 class LinkKinematics:
   @staticmethod
