@@ -4,3 +4,5 @@ sympy
 matplotlib
 polars
 pytest
+
+bvh
