@@ -1,7 +1,7 @@
 import numpy as np
 
 from kotsu.robot import *
-from kotsu.simple_draw import *
+from kotsu.gui.simple_draw import *
 
 def main():
   robot = Robot.init_from_model_file("simple_robot.ktm") 

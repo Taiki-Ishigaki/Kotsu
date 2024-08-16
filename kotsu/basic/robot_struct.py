@@ -7,7 +7,6 @@ import numpy as np
 from kotsu.basic.joint_struct import *
 from kotsu.basic.link_struct import *
 
-
 class RobotStruct:
   root_joint_id : int = 0
   root_link_id : int = 0
