@@ -12,16 +12,99 @@ class KBvh(Bvh.Bvh):
     frame = self.frame_joint_channels(frame_index, joint_name, channels)
     return frame
   
-class RobotBvh(Robot):
+class BvhJointStruct(JointStruct):
+  channels: np.ndarray = np.array([])
+  
+  def init(self):
+    self.set_dof()
+    
+  def set_dof(self):
+    self.dof = len(self.channels)
+    
+class BvhLinkStruct(LinkStruct):
+  channels: np.ndarray = np.array([])
+  offset: np.ndarray = np.array([])
+  
+class BvhRobotStruct(RobotStruct):
+  
+  def __init__(self, joints_):
+    self.joints = joints_
+    
   @staticmethod
   def read_bvh_file(data):
     bvh = KBvh(data)
 
+    dof_index = 0
     joints = []
     for j_name in bvh.get_joints_names():
-      joint = JointStruct()
+      joint = BvhJointStruct()
       joint.name = j_name
+      joint.channels = bvh.joint_channels(j_name)
+      joint.id = bvh.get_joint_index(j_name)
+      joint.dof = len(joint.channels)
+      joint.dof_index = dof_index
+      joint.offset = bvh.joint_offset(j_name)
+      
+      if joint.id == 0:
+        joint.is_root = True
+      else:
+        joint.is_root = False
+      
+      joints.append(joint)
 
+      dof_index += joint.dof
+    
+    return joints, bvh
+  
+class BvhMotionDF(RobotDF):
+  def __init__(self, robot_, aliases_ = ["coord"], separator_ = "_"):
+    self.separator = separator_
+    self.aliases = aliases_
+
+    self.df = pl.DataFrame()
+    self.set_gen_df(robot_)
+    
+  def set_gen_df(self, robot_):
+    for a in self.aliases:
+      for j in robot_.joints:
+        alias_name = j.name + self.separator + a
+        self.df = self.df.with_columns([pl.Series(name=alias_name, dtype=pl.List(pl.Float64))])
+    
+class BvhRobotMotion:
+  _df : BvhMotionDF 
+  frame_num : int = 0
+  def __init__(self, motion_df):
+    self._df = motion_df
+    
+  def df(self):
+    return self._df.df
+    
+  def set_motion(self, bvh):
+    self.frame_num = len(bvh.frames)
+    for i in range(self.frame_num):
+      motion_data = {}
+      for name in bvh.get_joints_names():
+        frame = bvh.get_joint_frame(i, name)
+        motion_data.update([(name + "_coord" , frame)])   
+      self._df.add_row(motion_data)
+
+class BvhRobot(BvhRobotStruct):
+  state : RobotState 
+  
+  def __init__(self, joints_, bvh_, motions_):
+    self.joints = joints_
+    self.bvh = bvh_
+    self.motions = motions_
+
+  @staticmethod
+  def init_from_bvh_file(bvh_file):
+    joints, bvh = BvhRobotStruct.read_bvh_file(bvh_file)
+    robot = BvhRobotStruct(joints)
+    motions = BvhRobotMotion(BvhMotionDF(robot))
+    motions.set_motion(bvh)
+    return BvhRobot(joints, bvh, motions)
+  
+    
 # import re
 
 # class BvhNode:

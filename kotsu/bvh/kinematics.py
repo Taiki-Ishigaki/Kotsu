@@ -6,6 +6,3 @@ from kotsu.bvh.struct import *
 
 
 class BvhKinematics:
-
-  @staticmethod
-  def 
