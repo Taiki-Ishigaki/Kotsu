@@ -16,13 +16,13 @@ class RobotDF:
     self.separator = separator_
 
     self.df = pl.DataFrame()
-    self.set_gen_df()
+    self.set_df()
     
   def add_row(self, data):
     new_row = pl.DataFrame([data])
     self.df = self.df.vstack(new_row)
     
-  def set_gen_df(self):
+  def set_df(self):
     for name in self.names:
       for a in self.aliases:
         alias_name = name + self.separator + a
