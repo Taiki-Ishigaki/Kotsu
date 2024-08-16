@@ -14,16 +14,13 @@ class KBvh(Bvh.Bvh):
   
 class BvhJointStruct(JointStruct):
   channels: np.ndarray = np.array([])
+  offset: np.ndarray = np.array([])
   
   def init(self):
     self.set_dof()
     
   def set_dof(self):
     self.dof = len(self.channels)
-    
-class BvhLinkStruct(LinkStruct):
-  channels: np.ndarray = np.array([])
-  offset: np.ndarray = np.array([])
   
 class BvhRobotStruct(RobotStruct):
   
@@ -56,28 +53,15 @@ class BvhRobotStruct(RobotStruct):
     
     return joints, bvh
   
-class BvhMotionDF(RobotDF):
-  def __init__(self, robot_, aliases_ = ["coord"], separator_ = "_"):
-    self.separator = separator_
-    self.aliases = aliases_
-
-    self.df = pl.DataFrame()
-    self.set_gen_df(robot_)
-    
-  def set_gen_df(self, robot_):
-    for a in self.aliases:
-      for j in robot_.joints:
-        alias_name = j.name + self.separator + a
-        self.df = self.df.with_columns([pl.Series(name=alias_name, dtype=pl.List(pl.Float64))])
-    
 class BvhRobotMotion:
-  _df : BvhMotionDF 
+  df : RobotDF
+  
   frame_num : int = 0
-  def __init__(self, motion_df):
-    self._df = motion_df
+  def __init__(self, bvh):
+    state_names = bvh.get_joints_names()
+    self.df = RobotDF(state_names, ["coord"], "_")
     
-  def df(self):
-    return self._df.df
+    self.set_motion(bvh)
     
   def set_motion(self, bvh):
     self.frame_num = len(bvh.frames)
@@ -86,7 +70,7 @@ class BvhRobotMotion:
       for name in bvh.get_joints_names():
         frame = bvh.get_joint_frame(i, name)
         motion_data.update([(name + "_coord" , frame)])   
-      self._df.add_row(motion_data)
+      self.df.add_row(motion_data)
 
 class BvhRobot(BvhRobotStruct):
   state : RobotState 
@@ -100,8 +84,7 @@ class BvhRobot(BvhRobotStruct):
   def init_from_bvh_file(bvh_file):
     joints, bvh = BvhRobotStruct.read_bvh_file(bvh_file)
     robot = BvhRobotStruct(joints)
-    motions = BvhRobotMotion(BvhMotionDF(robot))
-    motions.set_motion(bvh)
+    motions = BvhRobotMotion(bvh)
     return BvhRobot(joints, bvh, motions)
   
     
