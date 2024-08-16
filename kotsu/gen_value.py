@@ -5,21 +5,19 @@
 from kotsu.df.robot_df import *
 
 class RobotGenValue:
-  _df : RobotGenDF
+  df : RobotDF
   coord : np.ndarray = np.array([])
   veloc : np.ndarray = np.array([])
   accel : np.ndarray = np.array([])
   force : np.ndarray = np.array([])
   
-  def __init__(self, link_gen_df):
-    self._df = link_gen_df
-    
-  def df(self):
-    return self._df.df
+  def __init__(self, robot, aliases = ["coord", "veloc", "accel", "force"], separator = "_"):
+    state_names = robot.joint_names + robot.link_names
+    self.df = RobotDF(state_names, aliases, separator)
   
   def to_dict(self, index):
-    gen_value_row_tuple = self._df.df.row(index)
-    gen_value_columns = self._df.df.columns
+    gen_value_row_tuple = self.df.df.row(index)
+    gen_value_columns = self.df.df.columns
     gen_value = dict(zip(gen_value_columns, gen_value_row_tuple))
     return gen_value
     
@@ -58,17 +56,18 @@ class RobotGenValue:
   
   def import_vecs(self, robot, vecs):
     data = {}
-    for i in range(len(vecs)):
-      for j in robot.joints:
+    for j in robot.joints:
+      for i in range(len(vecs)):
         vec = self._vec_to_gen_value(j.dof, j.dof_index, vecs[i])
-        data.update([(j.name + "_" + self._df.aliases[i] , vec)])
-      for l in robot.links:
+        data.update([(j.name + "_" + self.df.aliases[i] , vec)])
+    for l in robot.links:
+      for i in range(len(vecs)):  
         vec = self._vec_to_gen_value(l.dof, robot.joint_dof+l.dof_index, vecs[i])
-        data.update([(l.name + "_" + self._df.aliases[i] , vec)])
-    self._df.add_row(data)
+        data.update([(l.name + "_" + self.df.aliases[i] , vec)])
+    self.df.add_row(data)
     
   def joint_gen_value(self, joint, name):
-    return self.df()[joint.name + "_" + name][-1].to_numpy()
+    return self.df.df[joint.name + "_" + name][-1].to_numpy()
 
   def joint_coord(self, joint):
     return self.link_gen_value(joint, "coord")
@@ -83,7 +82,7 @@ class RobotGenValue:
     return self.link_gen_value(joint, "force")
     
   def link_gen_value(self, link, name):
-    return self.df()[link.name + "_" + name][-1].to_numpy()
+    return self.df.df[link.name + "_" + name][-1].to_numpy()
 
   def link_coord(self, link):
     return self.link_gen_value(link, "coord")

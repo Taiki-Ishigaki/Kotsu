@@ -5,13 +5,11 @@
 from kotsu.df.robot_df import *
 
 class RobotState:
-  _df : RobotStateDF 
+  df : RobotDF
   
-  def __init__(self, state_df):
-    self._df = state_df
-    
-  def df(self):
-    return self._df.df
+  def __init__(self, robot, aliases = ["pos", "rot", "vel", "acc"], separator = "_"):
+    state_names = robot.link_names
+    self.df = RobotDF(state_names, aliases, separator)
     
   @staticmethod
   def link_state_vec(df, link, name):
@@ -45,7 +43,7 @@ class RobotState:
     labels = []
     for l in robot.links:
       labels.append(l.name+"_"+name) 
-    mat = [self.df()[label][-1].to_list() for label in labels]
+    mat = [self.df.df[label][-1].to_list() for label in labels]
     return np.array(mat)
   
   def link_pos(self, link):
@@ -72,4 +70,4 @@ class RobotState:
     return a.adjoint()
 
   def import_state(self, data):
-    self._df.add_row(data)
+    self.df.add_row(data)

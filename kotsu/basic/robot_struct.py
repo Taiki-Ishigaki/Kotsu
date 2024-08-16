@@ -38,9 +38,22 @@ class RobotStruct:
         self.root_link_id = l.id
       
     self.dof = self.joint_dof + self.link_dof
+    
+    self.set_link_names()
+    self.set_joint_names()
       
   def connectivity(self):
     return self.cnct_mat
+  
+  def set_link_names(self):
+    self.link_names = []
+    for l in self.links:
+      self.link_names.append(l.name)
+      
+  def set_joint_names(self):
+    self.joint_names = []
+    for j in self.joints:
+      self.joint_names.append(j.name)
   
   @staticmethod
   def read_model_file(robot_et):    

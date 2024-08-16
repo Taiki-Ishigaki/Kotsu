@@ -14,11 +14,11 @@ def main():
   vecs = [coord, veloc, accel, force]
 
   robot.import_gen_vecs(vecs)
-  print(robot.gen_value.df())
+  print(robot.gen_value.df.df)
   
   robot.update_kinematics()
   
-  print(robot.state.df())
+  print(robot.state.df.df)
 
   show_kotsu(robot, robot.state)
   

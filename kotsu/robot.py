@@ -30,8 +30,8 @@ class Robot(RobotStruct):
     robot_et = ET.parse(model_file_name).getroot()
     links, joints = RobotStruct.read_model_file(robot_et)
     robot = RobotStruct(links, joints)
-    gen_value = RobotGenValue(RobotGenDF(robot))
-    state = RobotState(RobotStateDF(robot))
+    gen_value = RobotGenValue(robot)
+    state = RobotState(robot)
     return Robot(links, joints, gen_value, state)
 
   def import_gen_vecs(self, vecs):
