@@ -14,7 +14,8 @@ ROOT root
   }
 }
 MOTION
-Frames: 2
+Frames: 3
 Frame Time: 0.020000 
-0 0 0 1 0 0 0 10 0 
+0 0 0 1 0 0 0 10 0
+0 0 0 1 0 0 0 10 0
 0 0 0 1 0 0 0 10 0
