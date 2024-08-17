@@ -12,9 +12,17 @@ def main():
   force = [0., 0., 0.]
   
   vecs = [coord, veloc, accel, force]
-
+  vec = []
+  vec.extend(coord)
+  vec.extend(veloc)
+  vec.extend(accel)
+  vec.extend(force)
+  
   robot.import_gen_vecs(vecs)
   print(robot.gen_value.df.df)
+  
+  robot.import_motions(vec)
+  print(robot.motions.motions)
   
   robot.update_kinematics()
   
