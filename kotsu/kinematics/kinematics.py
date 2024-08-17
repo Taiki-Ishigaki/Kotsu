@@ -4,15 +4,12 @@
 
 import numpy as np
 
-from mathrobo.basic import *
-from mathrobo.so3 import *
-from mathrobo.se3 import *
+import mathrobo as mr
 
-from kotsu.basic.link_struct import *
-from kotsu.basic.robot_struct import *
+from ..basic import *
 
-from kotsu.gen_value import *
-from kotsu.state import *
+from ..gen_value import *
+from ..state import *
 
 class LinkKinematics:
   @staticmethod
@@ -21,7 +18,7 @@ class LinkKinematics:
       v = b@theta
     else:
       v = b@np.zeros(1)
-    frame = SE3.adj_mat(v)
+    frame = mr.SE3.adj_mat(v)
     return frame
 
   @staticmethod
@@ -40,7 +37,7 @@ class LinkKinematics:
     joint_coord = motinos.joint_coord(joint)
     if parent:
       rot = RobotState.vec_to_mat(state[parent.name + "_rot"])
-      h = SE3(rot, state[parent.name + "_pos"])
+      h = mr.SE3(rot, state[parent.name + "_pos"])
       p_link_frame = h.adjoint()
     else:
       p_link_frame = np.identity(6)
@@ -105,5 +102,5 @@ class LinkKinematics:
     rel_frame = LinkKinematics.link_rel_frame(link,  joint, parent, joint_coord)
     rel_vel = LinkKinematics.link_rel_vel(link, joint, joint_veloc)
     rel_acc = LinkKinematics.link_rel_acc(link, joint, joint_accel)
-    acc = rel_frame @ link_acc + SE3.adj_hat( rel_frame @ rel_vel ) @ link_vel + rel_acc
+    acc = rel_frame @ link_acc + mr.SE3.adj_hat( rel_frame @ rel_vel ) @ link_vel + rel_acc
     return acc

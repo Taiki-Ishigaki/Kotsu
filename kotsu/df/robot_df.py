@@ -5,10 +5,6 @@
 import numpy as np
 import polars as pl
 
-from mathrobo.basic import *
-from mathrobo.so3 import *
-from mathrobo.se3 import *
-
 class RobotDF:
   def __init__(self, names_, aliases_, separator_ = "_"):
     self.names = names_

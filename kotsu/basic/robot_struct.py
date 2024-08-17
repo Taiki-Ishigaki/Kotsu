@@ -4,8 +4,8 @@
 
 import numpy as np
 
-from kotsu.basic.joint_struct import *
-from kotsu.basic.link_struct import *
+from .joint_struct import *
+from .link_struct import *
 
 class RobotStruct:
   root_joint_id : int = 0

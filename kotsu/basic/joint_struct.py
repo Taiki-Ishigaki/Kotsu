@@ -7,10 +7,6 @@ import warnings
 
 from dataclasses import dataclass
 
-from mathrobo.basic import *
-from mathrobo.so3 import *
-from mathrobo.se3 import *
-
 @dataclass
 class JointStruct_:
   name: str = 'name'

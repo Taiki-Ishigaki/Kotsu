@@ -4,7 +4,7 @@
 
 import bvh as Bvh
 
-from kotsu.robot import *
+from ..robot import *
 
 class KBvh(Bvh.Bvh):
   def get_joint_frame(self, frame_index, joint_name):

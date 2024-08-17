@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
-import numpy as np
 
-from kotsu.robot import *
+from ..robot import *
 
 def show_kotsu(robot, robot_state):
   # 3Dプロットの作成

@@ -5,7 +5,7 @@
 import numpy as np
 import warnings
 
-from kotsu.df.robot_df import *
+from .df import *
 
 class RobotMotions:
   motions : np.ndarray = np.array([])

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # 2024.08.14 Created by T.Ishigaki
 
-from kotsu.df.robot_df import *
+from .df import *
 
 class RobotState:
   df : RobotDF

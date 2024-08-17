@@ -7,11 +7,13 @@ import numpy as np
 from pickle import FALSE
 import xml.etree.ElementTree as ET
 
-from kotsu.basic.robot_struct import *
-from kotsu.kinematics.kinematics import *
+import mathrobo as mr
 
-from kotsu.gen_value import *
-from kotsu.state import *
+from .basic import *
+from .kinematics import *
+
+from .gen_value import *
+from .state import *
   
 class Robot(RobotStruct):
 
@@ -50,7 +52,7 @@ class Robot(RobotStruct):
         veloc = LinkKinematics.vel_kinematics(l, joint, link, motions, state_data)  
         accel = LinkKinematics.acc_kinematics(l, joint, link, motions, state_data) 
       
-        a = SE3()
+        a = mr.SE3()
         a.set_adj_mat(frame)
 
         pos = a.pos()

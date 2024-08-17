@@ -1,10 +1,9 @@
 import numpy as np
 
-from kotsu.robot import *
-from kotsu.gui.simple_draw import *
+import kotsu
 
 def main():
-  robot = Robot.init_from_model_file("simple_robot.ktm") 
+  robot = kotsu.Robot.init_from_model_file("simple_robot.ktm") 
   
   coord = [1., 1., 1.]
   veloc = [0., 0., 0.]
@@ -28,7 +27,7 @@ def main():
   
   print(robot.state.df.df)
 
-  show_kotsu(robot, robot.state)
+  kotsu.show_kotsu(robot, robot.state)
   
 if __name__ == "__main__":
     main()

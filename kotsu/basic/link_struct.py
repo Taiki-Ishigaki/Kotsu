@@ -7,9 +7,7 @@ import warnings
 
 from dataclasses import dataclass, field
 
-from mathrobo.basic import *
-from mathrobo.so3 import *
-from mathrobo.se3 import *
+import mathrobo as mr
 
 @dataclass
 class LinkStruct_:
@@ -68,7 +66,7 @@ class LinkStruct(LinkStruct_):
     self.connect_frames = {}
     self.connect_adj_frames = {}
     for j in self.connect_joint:
-      h = SE3(self.connect_rot[j], self.connect_pos[j])
+      h = mr.SE3(self.connect_rot[j], self.connect_pos[j])
       self.connect_frames.update({j : h.matrix()})
       self.connect_adj_frames.update({j : h.adjoint()})
       
