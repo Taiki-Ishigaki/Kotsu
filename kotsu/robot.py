@@ -18,10 +18,11 @@ class Robot(RobotStruct):
   gen_value : RobotGenValue
   state : RobotState 
 
-  def __init__(self, links_, joints_, gen_value_, state_):
+  def __init__(self, links_, joints_, gen_value_, motions_, state_):
     self.joints = joints_
     self.links = links_
     self.gen_value = gen_value_
+    self.motions = motions_
     self.state = state_
     self.robot_init()
 
@@ -31,19 +32,23 @@ class Robot(RobotStruct):
     links, joints = RobotStruct.read_model_file(robot_et)
     robot = RobotStruct(links, joints)
     gen_value = RobotGenValue(robot)
+    motinos = RobotMotions(robot)
     state = RobotState(robot)
-    return Robot(links, joints, gen_value, state)
+    return Robot(links, joints, gen_value, motinos, state)
 
   def import_gen_vecs(self, vecs):
     self.gen_value.import_vecs(self, vecs)
     
-  def kinematics_tree(self, link, joint, gen_value, state_data):
+  def import_motions(self, vecs):
+    self.motions.set_motion(vecs)
+    
+  def kinematics_tree(self, link, joint, motions, state_data):
     for link_id in joint.connect_link:
       if LinkStruct.link_id(link) != link_id or link == None:
         l = self.links[link_id]
-        frame = LinkKinematics.kinematics(l, joint, link, gen_value, state_data)  
-        veloc = LinkKinematics.vel_kinematics(l, joint, link, gen_value, state_data)  
-        accel = LinkKinematics.acc_kinematics(l, joint, link, gen_value, state_data) 
+        frame = LinkKinematics.kinematics(l, joint, link, motions, state_data)  
+        veloc = LinkKinematics.vel_kinematics(l, joint, link, motions, state_data)  
+        accel = LinkKinematics.acc_kinematics(l, joint, link, motions, state_data) 
       
         a = SE3()
         a.set_adj_mat(frame)
@@ -59,11 +64,10 @@ class Robot(RobotStruct):
         for joint_id in l.connect_joint:
           if joint.id != joint_id:
             j = self.joints[joint_id]
-            self.kinematics_tree(l, j, gen_value, state_data)    
+            self.kinematics_tree(l, j, motions, state_data)    
 
   def update_kinematics(self):
-    gen_value = self.gen_value.to_dict(-1)
     state_data = {}
-    self.kinematics_tree(None, self.joints[self.root_joint_id], gen_value, state_data)
+    self.kinematics_tree(None, self.joints[self.root_joint_id], self.motions, state_data)
 
     self.state.import_state(state_data)

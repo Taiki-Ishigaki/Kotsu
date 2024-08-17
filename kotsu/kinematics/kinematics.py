@@ -36,8 +36,8 @@ class LinkKinematics:
     return rel_frame
 
   @staticmethod
-  def kinematics(link, joint, parent, gen_value, state):
-    joint_coord = gen_value[joint.name + "_coord"]
+  def kinematics(link, joint, parent, motinos, state):
+    joint_coord = motinos.joint_coord(joint)
     if parent:
       rot = RobotState.vec_to_mat(state[parent.name + "_rot"])
       h = SE3(rot, state[parent.name + "_pos"])
@@ -64,9 +64,9 @@ class LinkKinematics:
     return rel_vel
 
   @staticmethod
-  def vel_kinematics(link, joint, parent, gen_value, state):
-    joint_coord = gen_value[joint.name + "_coord"]
-    joint_veloc = gen_value[joint.name + "_veloc"]
+  def vel_kinematics(link, joint, parent, motinos, state):
+    joint_coord = motinos.joint_coord(joint)
+    joint_veloc = motinos.joint_veloc(joint)
     if parent:
       link_vel = state[parent.name + "_vel"]
     else:
@@ -92,10 +92,10 @@ class LinkKinematics:
     return rel_acc
 
   @staticmethod
-  def acc_kinematics(link, joint, parent, gen_value, state):
-    joint_coord = gen_value[joint.name + "_coord"]
-    joint_veloc = gen_value[joint.name + "_veloc"]
-    joint_accel = gen_value[joint.name + "_accel"]
+  def acc_kinematics(link, joint, parent, motinos, state):
+    joint_coord = motinos.joint_coord(joint)
+    joint_veloc = motinos.joint_veloc(joint)
+    joint_accel = motinos.joint_accel(joint)
     if parent:
       link_vel = state[parent.name + "_vel"]
       link_acc = state[parent.name + "_acc"]

@@ -83,7 +83,6 @@ class RobotStruct:
       dof_index += j.dof
       
     i = 0
-    dof_index = 0
     link_list_et = robot_et.findall('./link_list/link')
     for link_et in link_list_et:
       l = LinkStruct()
