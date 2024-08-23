@@ -31,36 +31,16 @@ class LinkStruct(LinkStruct_):
   joint_select_mat : np.ndarray = np.array([])
 
   def init(self):
-    self.joint_select_mat = self._joint_select_mat(self.joint_type)
     self.set_dof()
     self.set_connect_frames()
 
-  @staticmethod
-  def _joint_dof(type):
-    if type == "revolution":
-      return 1
-    elif type == "fix":
-      return 0
-    else:
-      warnings.warn('Not applicable joint type', DeprecationWarning)
-      return 0
+  def set_dof(self):
+    self.dof = self._link_dof(self.link_type)
   
   @staticmethod
   def _link_dof(type):
     if type == "rigid":
       return 0
-    
-  @staticmethod
-  def _joint_select_mat(joint_type):
-    if joint_type == 'fix':
-      return np.zeros((6,1))
-    elif joint_type == 'revolution':
-      mat = np.zeros((6,1))
-      mat[2,0] = 1
-      return mat
-  
-  def set_dof(self):
-    self.dof = self._link_dof(self.link_type)
   
   def set_connect_frames(self):
     self.connect_frames = {}
