@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from ..robot import *
 
-def show_kotsu(robot, robot_state):
+def show_kotsu(robot, robot_state, show = False):
   # 3Dプロットの作成
   fig = plt.figure()
   ax = fig.add_subplot(111, projection='3d')
@@ -21,5 +21,7 @@ def show_kotsu(robot, robot_state):
   ax.set_ylabel('Y')
   ax.set_zlabel('Z')
 
-  # plt.show()
+  if show:
+    plt.show()
+    
   plt.savefig('simple_draw.png')
