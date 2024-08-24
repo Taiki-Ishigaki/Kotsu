@@ -10,8 +10,6 @@ def main():
   robot.update_kinematics(robot.motions.motion_vecs[1])
   
   print(robot.state.df.df)
-  
-  kotsu.show_kotsu(robot, robot.state)
 
 if __name__ == "__main__":
     main()
