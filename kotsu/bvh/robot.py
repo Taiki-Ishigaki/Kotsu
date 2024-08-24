@@ -35,13 +35,9 @@ class BvhRobot(BvhRobotStruct):
     state_data.update([(joint.name + "_pos" , pos.tolist())])
     state_data.update([(joint.name + "_rot" , rot_vec.tolist())])
     
-    c_list = self.bvh.get_joint_child(joint.name)
-
-    if c_list:
-      for child in c_list:
-        for j in self.joints:
-          if j.name == child:
-            self.kinematics_tree(j, joint, motion_vec, state_data)
+    for j_id in joint.children:
+      self.kinematics_tree(self.joints[j_id], joint, motion_vec, state_data)
+      
 
   def update_kinematics(self, motion_vec):
     state_data = {}

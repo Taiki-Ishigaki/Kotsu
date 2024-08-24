@@ -81,7 +81,16 @@ class BvhRobotStruct(RobotStruct):
       joints.append(joint)
 
       dof_index += joint.dof
-    
+      
+    for j in joints:
+      j.children = []
+      c_list = bvh.get_joint_child(j.name)
+      if c_list:
+        for child in c_list:
+          for j_c in joints:
+            if j_c.name == child:
+              j.children.append(j_c.id)
+
     return joints, bvh
   
   def set_joint_names(self):
@@ -97,12 +106,11 @@ class BvhRobotMotion:
   def __init__(self, bvh):
     state_names = bvh.get_joints_names()
     self.motion_df = RobotDF(state_names, ["coord"], "_")
-    
-    self.set_motion(bvh)
+    self.frame_num = len(bvh.frames)
+    self.dof = len(bvh.frames[0])
     self.set_motion_vec(bvh)
     
   def set_motion(self, bvh):
-    self.frame_num = len(bvh.frames)
     for i in range(self.frame_num):
       motion_data = {}
       for name in bvh.get_joints_names():
@@ -111,11 +119,11 @@ class BvhRobotMotion:
       self.motion_df.add_row(motion_data)
 
   def set_motion_vec(self, bvh):
-    shape  = (len(bvh.frames), len(bvh.frames[0]))
+    shape  = (self.frame_num, self.dof)
     self.motion_vecs = np.zeros(shape)
     
-    for frame_index in range(len(bvh.frames)):
-      for data_index in range(len(bvh.frames[0])):
+    for frame_index in range(self.frame_num):
+      for data_index in range(self.dof):
         self.motion_vecs[frame_index][data_index] = float(bvh.frames[frame_index][data_index])
     
 class BvhRobotState:
@@ -137,7 +145,7 @@ class BvhRobotState:
     mat = [self.df.df[label][-1].to_list() for label in labels]
     return np.array(mat)
   
-  def all_link_pos(self, robot):
+  def all_joint_pos(self, robot):
     return self.all_state_vec(robot, "pos")
       
 # import re
