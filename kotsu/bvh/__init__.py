@@ -7,3 +7,5 @@ from .struct import *
 from .kinematics import *
 
 from .robot import *
+
+from .draw import *
