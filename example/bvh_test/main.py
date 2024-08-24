@@ -3,10 +3,9 @@ import kotsu
 
 def main():
   with open('./motion.bvh', 'r') as f:
-  # with open('./test.bvh', 'r') as f:
     robot = kotsu.bvh.BvhRobot.init_from_bvh_file(f.read())
-
-  print(robot.state.df.df)
+  
+  kotsu.show_bvh(robot)
 
   robot.update_kinematics(robot.motions.motion_vecs[1])
   
