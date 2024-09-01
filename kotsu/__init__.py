@@ -13,3 +13,4 @@ from .robot import *
 
 from .gui import *
 from .bvh import *
+from .urdf import *
