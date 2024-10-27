@@ -27,7 +27,7 @@ class BvhRobot(BvhRobotStruct):
     frame = BvhKinematics.kinematics(joint, parent, motion_vec, state_data)  
           
     a = mr.SE3()
-    a.set_matrix(frame)
+    a.set_mat(frame)
 
     pos = a.pos()
     rot_vec = RobotState.mat_to_vec(a.rot())

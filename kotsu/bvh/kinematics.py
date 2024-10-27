@@ -38,7 +38,7 @@ class BvhKinematics:
     if parent:
       rot = RobotState.vec_to_mat(state[parent.name + "_rot"])
       h = mr.SE3(rot, state[parent.name + "_pos"])
-      p_frame = h.matrix()
+      p_frame = h.mat()
     else:
       p_frame = np.identity(4)
     rel_frame = BvhKinematics.joint_rel_frame(joint, motinos)

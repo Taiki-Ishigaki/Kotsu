@@ -63,7 +63,7 @@ class RobotState:
     
   def link_frame(self, link):
     h = SE3(self.link_rot(link), self.link_pos(link))
-    return h.matrix()
+    return h.mat()
 
   def link_adj_frame(self, link):
     a = SE3(self.link_rot(link), self.link_pos(link))

@@ -47,7 +47,7 @@ class LinkStruct(LinkStruct_):
     self.connect_adj_frames = {}
     for j in self.connect_joint:
       h = mr.SE3(self.connect_rot[j], self.connect_pos[j])
-      self.connect_frames.update({j : h.matrix()})
+      self.connect_frames.update({j : h.mat()})
       self.connect_adj_frames.update({j : h.adjoint()})
       
   @staticmethod
