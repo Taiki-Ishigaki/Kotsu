@@ -9,6 +9,9 @@ from dataclasses import dataclass
 
 @dataclass
 class JointStruct_:
+  '''
+    joint primitive imformation
+  '''
   name: str = 'name'
   joint_type: str = "revolution"
   is_root: bool = False

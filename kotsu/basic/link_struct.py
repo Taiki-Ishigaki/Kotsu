@@ -11,11 +11,12 @@ import mathrobo as mr
 
 @dataclass
 class LinkStruct_:
+  '''
+    Link primitive imformation
+  '''
   name: str = 'name'
   joint_type: str = "revolution"
   link_type: str = "rigid"
-  is_root: bool = False
-  is_edge: bool = False
   connect_joint: np.ndarray = field(default_factory=lambda: np.array([]))
   connect_pos: np.ndarray = field(default_factory=lambda: np.zeros(3))
   connect_rot: np.ndarray = field(default_factory=lambda: np.identity(3))
@@ -27,6 +28,8 @@ class LinkStruct(LinkStruct_):
   id : int = 0
   dof : int = 0
   dof_index : int = 0
+  is_root: bool = False
+  is_edge: bool = False
 
   joint_select_mat : np.ndarray = np.array([])
 
@@ -47,7 +50,7 @@ class LinkStruct(LinkStruct_):
     self.connect_adj_frames = {}
     for j in self.connect_joint:
       h = mr.SE3(self.connect_rot[j], self.connect_pos[j])
-      self.connect_frames.update({j : h.matrix()})
+      self.connect_frames.update({j : h.mat()})
       self.connect_adj_frames.update({j : h.adjoint()})
       
   @staticmethod

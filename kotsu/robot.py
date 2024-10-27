@@ -53,7 +53,7 @@ class Robot(RobotStruct):
         accel = LinkKinematics.acc_kinematics(l, joint, link, motions, state_data) 
       
         a = mr.SE3()
-        a.set_adj_mat(frame)
+        a.set_mat_adj(frame)
 
         pos = a.pos()
         rot_vec = RobotState.mat_to_vec(a.rot())
